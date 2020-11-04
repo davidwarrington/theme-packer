@@ -1,0 +1,8 @@
+{
+  "name": "shopify-webpack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:davidwarrington/shopify-webpack",
+  "author": "davidwarrington <davidmwarrington+github@gmail.com>",
+  "license": "MIT"
+}
