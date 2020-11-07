@@ -2,6 +2,7 @@ const consola = require('consola');
 const { debounce } = require('throttle-debounce');
 const webpack = require('webpack');
 const getWebpackConfig = require('../webpack.config');
+const logWebpackIssues = require('../utils/log-webpack-issues');
 
 const STATES = {
     IDLE: 1,
@@ -29,21 +30,26 @@ class Builder {
 
         if (mode === 'run') {
             this.state = STATES.RUNNING;
-            this.compiler.run(error => {
-                if (error) {
-                    consola.error(new Error(error));
-                }
+            this.compiler.run((error, result) => {
+                logWebpackIssues(error, result);
 
                 this.state = STATES.IDLE;
-                consola.success('Built!');
+                if (result.hasErrors()) {
+                    consola.info('Build attempted.');
+                } else {
+                    consola.success('Built!');
+                }
             });
         } else if (mode === 'watch') {
-            this.compiler.watch({}, error => {
-                if (error) {
-                    consola.error(new Error(error));
-                }
+            this.compiler.watch({}, (error, result) => {
+                logWebpackIssues(error, result);
+
                 this.state = STATES.RUNNING;
-                consola.success('Successfully built!');
+                if (result.hasErrors()) {
+                    consola.info('Build attempted...');
+                } else {
+                    consola.success('Successfully built!');
+                }
             });
         }
     }
