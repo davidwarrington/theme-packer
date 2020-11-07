@@ -1,6 +1,6 @@
 const consola = require('consola');
 const webpack = require('webpack');
-const webpackConfig = require('../webpack.config');
+const getWebpackConfig = require('../webpack.config');
 
 const STATES = {
     IDLE: 1,
@@ -21,7 +21,7 @@ class Builder {
         // Close existing compiler if already running.
         await this.close();
 
-        this.compiler = webpack(webpackConfig);
+        this.compiler = webpack(getWebpackConfig());
 
         if (mode === 'run') {
             this.state = STATES.RUNNING;
@@ -40,7 +40,7 @@ class Builder {
                 }
                 this.state = STATES.RUNNING;
                 consola.success('Successfully built!');
-            })
+            });
         }
     }
 

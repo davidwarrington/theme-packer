@@ -1,6 +1,7 @@
 const chokidar = require('chokidar');
 const Builder = require('./packages/Builder');
-const TEMPLATES_DIR = 'src/templates/';
+
+const TEMPLATES_DIR = 'src/scripts/templates/';
 const builder = new Builder();
 
 (async () => {
