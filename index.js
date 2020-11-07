@@ -1,6 +1,7 @@
 const chokidar = require('chokidar');
 const Builder = require('./packages/Builder');
 
+const LAYOUT_DIR = 'src/scripts/layout/';
 const TEMPLATES_DIR = 'src/scripts/templates/';
 const builder = new Builder();
 
@@ -8,15 +9,11 @@ const builder = new Builder();
     await builder.start('watch');
 
     chokidar.watch('./src', { ignoreInitial: true }).on('all', async (event, path) => {
-        const changeInTemplatesDir = path.startsWith(TEMPLATES_DIR);
+        const changeInLayoutOrTemplatesDir = [LAYOUT_DIR, TEMPLATES_DIR]
+            .some(dirPath => path.startsWith(dirPath));
         const restartEvent = ['add', 'unlink'].includes(event);
-        const builderIsAlreadyRestarting = builder.state === Builder.states.RESTARTING;
 
-        if (
-            changeInTemplatesDir &&
-            restartEvent &&
-            !builderIsAlreadyRestarting
-        ) {
+        if (changeInLayoutOrTemplatesDir && restartEvent) {
             builder.restart('watch');
         }
     });
