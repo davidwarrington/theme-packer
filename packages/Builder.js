@@ -1,11 +1,11 @@
 const consola = require('consola');
+const { debounce } = require('throttle-debounce');
 const webpack = require('webpack');
 const getWebpackConfig = require('../webpack.config');
 
 const STATES = {
     IDLE: 1,
     RUNNING: 2,
-    RESTARTING: 3,
 };
 
 /** @typedef {'run'|'watch'} RunMode */
@@ -14,6 +14,10 @@ class Builder {
     constructor() {
         this.compiler = null;
         this.state = STATES.IDLE;
+
+        // Prevent multiple files being added/deleted at once from causing multiple restarts.
+        this.start = debounce(200, this.start);
+        this.restart = debounce(200, this.restart);
     }
 
     /** @param {RunMode} mode */
@@ -59,7 +63,6 @@ class Builder {
     /** @param {RunMode} mode */
     async restart(mode) {
         consola.info('Restarting...');
-        this.state = STATES.RESTARTING;
         this.start(mode);
     }
 }

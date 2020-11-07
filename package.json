@@ -8,6 +8,7 @@
     "dependencies": {
         "chokidar": "^3.4.3",
         "consola": "^2.15.0",
+        "throttle-debounce": "^3.0.1",
         "webpack": "^5.4.0"
     }
 }
