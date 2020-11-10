@@ -60,9 +60,9 @@ class Builder {
             return Promise.resolve();
         }
 
-        this.compiler.close(() => {
+        return this.compiler.close(() => {
             this.state = STATES.IDLE;
-            Promise.resolve();
+            return Promise.resolve();
         });
     }
 

@@ -8,13 +8,17 @@ const builder = new Builder();
 (async () => {
     await builder.start('watch');
 
-    chokidar.watch('./src', { ignoreInitial: true }).on('all', async (event, path) => {
-        const changeInLayoutOrTemplatesDir = [LAYOUT_DIR, TEMPLATES_DIR]
-            .some(dirPath => path.startsWith(dirPath));
-        const restartEvent = ['add', 'unlink'].includes(event);
+    chokidar
+        .watch('./src', { ignoreInitial: true })
+        .on('all', async (event, path) => {
+            const changeInLayoutOrTemplatesDir = [
+                LAYOUT_DIR,
+                TEMPLATES_DIR,
+            ].some(dirPath => path.startsWith(dirPath));
+            const restartEvent = ['add', 'unlink'].includes(event);
 
-        if (changeInLayoutOrTemplatesDir && restartEvent) {
-            builder.restart('watch');
-        }
-    });
+            if (changeInLayoutOrTemplatesDir && restartEvent) {
+                builder.restart('watch');
+            }
+        });
 })();

@@ -30,10 +30,10 @@ const VALID_LIQUID_TEMPLATES = [
 
 /** @param {string} filename */
 const isValidTemplate = filename => {
-    return VALID_LIQUID_TEMPLATES.some(
-        template => filename.startsWith(template)
+    return VALID_LIQUID_TEMPLATES.some(template =>
+        filename.startsWith(template)
     );
-}
+};
 
 const getEntrypoints = () => {
     const entrypoints = {};
@@ -41,17 +41,15 @@ const getEntrypoints = () => {
     const entrypointsMap = {
         layout: fs.readdirSync('./src/scripts/layout'),
         templates: fs.readdirSync('./src/scripts/templates'),
-        'templates/customers':  fs.readdirSync('./src/scripts/templates/customers'),
+        'templates/customers': fs.readdirSync(
+            './src/scripts/templates/customers'
+        ),
     };
 
     Object.keys(entrypointsMap).forEach(key => {
         entrypointsMap[key].forEach(file => {
-            const name = path.parse(file).name;
-            const entryFile = path.join(
-                './src/scripts',
-                key,
-                `${name}.js`
-            );
+            const { name } = path.parse(file);
+            const entryFile = path.join('./src/scripts', key, `${name}.js`);
             const entryType = key.split('/')[0];
 
             // Ignore directories
@@ -71,6 +69,6 @@ const getEntrypoints = () => {
     consola.info('Entrypoints:', entrypoints);
 
     return entrypoints;
-}
+};
 
 module.exports = getEntrypoints;

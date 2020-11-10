@@ -14,14 +14,16 @@ const logWebpackIssues = (error, result) => {
     const info = result.toJson();
 
     if (result.hasErrors()) {
-        info.errors
-            .forEach(compilationError => consola.error(compilationError));
+        info.errors.forEach(compilationError =>
+            consola.error(compilationError)
+        );
     }
 
     if (result.hasWarnings()) {
-        info.warnings
-            .forEach(compilationWarning => consola.warn(compilationWarning));
+        info.warnings.forEach(compilationWarning =>
+            consola.warn(compilationWarning)
+        );
     }
-}
+};
 
 module.exports = logWebpackIssues;
