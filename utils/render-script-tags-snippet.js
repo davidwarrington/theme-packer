@@ -3,20 +3,32 @@ const path = require('path');
 const entryNameDelimiter = '@';
 const entryPartsDelimiter = '.';
 
+/** @typedef {{[key: string]: string}} Entrypoints */
+
 /**
  * @param {string} type
  * @param {string[]} otherFileNameParts
  */
 const getEntrypointKey = (type, otherFileNameParts) => {
-    const typePrefix = type === 'template' ? `${type}s` : type;
     const filename = otherFileNameParts.join(entryPartsDelimiter);
 
-    return `${typePrefix}.${path.basename(filename, path.extname(filename))}`;
+    return `${type}.${path.basename(filename, path.extname(filename))}`;
 };
 
 /**
  * @param {string} filename
- * @param {{[key: string]: string}} entrypoints
+ * @param {Entrypoints} entrypoints
+ */
+const getParentDirectory = (filename, entrypoints) => {
+    const key = path.basename(filename, path.extname(filename));
+    const dirname = path.dirname(entrypoints[key]);
+
+    return path.basename(dirname);
+};
+
+/**
+ * @param {string} filename
+ * @param {Entrypoints} entrypoints
  */
 const getPartialsData = (filename, entrypoints) => {
     const fileNameParts = filename
@@ -27,10 +39,22 @@ const getPartialsData = (filename, entrypoints) => {
             entryPartsDelimiter
         );
 
+        let parentDirectory;
+        if (type === 'templates') {
+            const parentDirectoryName = getParentDirectory(
+                filename,
+                entrypoints
+            );
+            if (parentDirectoryName !== 'templates') {
+                parentDirectory = parentDirectoryName;
+            }
+        }
+
         return {
             entrypoint: entrypoints[getEntrypointKey(type, otherFileNameParts)],
             filename: otherFileNameParts[0],
-            type,
+            parentDirectory,
+            type: type === 'templates' ? 'template' : type,
         };
     });
 };
@@ -49,13 +73,14 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
             const assetSrc = `{{ ${filename} | asset_url }}`;
 
             const conditions = partials
-                .map(
-                    partial =>
-                        `${partial.type} == '${path.basename(
-                            partial.filename,
-                            path.extname(partial.filename)
-                        )}'`
-                )
+                .map(partial => {
+                    let name = partial.filename;
+                    if (partial.parentDirectory) {
+                        name = `${partial.parentDirectory}/${name}`;
+                    }
+
+                    return `${partial.type} == '${name}'`;
+                })
                 .join(' or ');
 
             return `

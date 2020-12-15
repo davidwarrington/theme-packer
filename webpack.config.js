@@ -6,8 +6,10 @@ const getEntrypoints = require('./utils/get-entrypoints');
 const renderScriptTagsSnippet = require('./utils/render-script-tags-snippet');
 
 module.exports = () => {
+    const entrypoints = getEntrypoints();
+
     return {
-        entry: getEntrypoints(),
+        entry: entrypoints,
         output: {
             filename: '[name].js',
             path: path.resolve(__dirname, 'dist', 'assets'),
@@ -23,10 +25,14 @@ module.exports = () => {
             ],
         },
         plugins: [
-            new CleanWebpackPlugin(),
+            new CleanWebpackPlugin({
+                cleanOnceBeforeBuildPatterns: [
+                    path.join(process.cwd(), 'dist/**/*'),
+                ],
+            }),
             new HtmlWebpackPlugin({
                 chunksSortMode: 'auto',
-                entrypoints: getEntrypoints(),
+                entrypoints,
                 excludeChunks: 'static',
                 filename: '../snippets/includes.script-tags.liquid',
                 inject: false,
