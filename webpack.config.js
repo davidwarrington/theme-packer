@@ -1,5 +1,6 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getChunkName = require('./utils/get-chunk-name');
@@ -80,6 +81,18 @@ module.exports = () => {
                     removeAttributeQuotes: true,
                 },
                 templateContent: renderStyleTagsSnippet,
+            }),
+            new CopyWebpackPlugin({
+                /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
+                patterns: [
+                    { from: './src/assets/', to: '../assets/' },
+                    { from: './src/config/', to: '../config/' },
+                    { from: './src/layout/', to: '../layout/' },
+                    { from: './src/locales/', to: '../locales/' },
+                    { from: './src/sections/', to: '../sections/' },
+                    { from: './src/snippets/', to: '../snippets/' },
+                    { from: './src/templates/', to: '../templates/' },
+                ],
             }),
             new MiniCssExtractPlugin(),
         ],
