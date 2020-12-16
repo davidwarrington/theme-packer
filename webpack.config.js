@@ -85,7 +85,7 @@ module.exports = () => {
             new CopyWebpackPlugin({
                 /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
                 patterns: [
-                    { from: './src/assets/', to: '../assets/' },
+                    { from: './src/assets/', to: '[name].[ext]' },
                     { from: './src/config/', to: '../config/' },
                     { from: './src/layout/', to: '../layout/' },
                     { from: './src/locales/', to: '../locales/' },
