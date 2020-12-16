@@ -4,6 +4,14 @@ const entryNameDelimiter = '@';
 const entryPartsDelimiter = '.';
 
 /** @typedef {{[key: string]: string}} Entrypoints */
+/**
+ * @typedef {{
+ *  entrypoint: string;
+ *  filename: string;
+ *  parentDirectory?: string;
+ *  type: string;
+ * }} ModulePartialData
+ */
 
 /**
  * @param {string} type
@@ -13,6 +21,20 @@ const getEntrypointKey = (type, otherFileNameParts) => {
     const filename = otherFileNameParts.join(entryPartsDelimiter);
 
     return `${type}.${path.basename(filename, path.extname(filename))}`;
+};
+
+/** @param {ModulePartialData[]} partials */
+const getLiquidConditionsFromPartials = partials => {
+    return partials
+        .map(partial => {
+            let name = partial.filename;
+            if (partial.parentDirectory) {
+                name = `${partial.parentDirectory}/${name}`;
+            }
+
+            return `${partial.type} == '${name}'`;
+        })
+        .join(' or ');
 };
 
 /**
@@ -29,6 +51,7 @@ const getParentDirectory = (filename, entrypoints) => {
 /**
  * @param {string} filename
  * @param {Entrypoints} entrypoints
+ * @returns {ModulePartialData[]}
  */
 const getPartialsData = (filename, entrypoints) => {
     const fileNameParts = filename
@@ -72,16 +95,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
             );
             const assetSrc = `{{ ${filename} | asset_url }}`;
 
-            const conditions = partials
-                .map(partial => {
-                    let name = partial.filename;
-                    if (partial.parentDirectory) {
-                        name = `${partial.parentDirectory}/${name}`;
-                    }
-
-                    return `${partial.type} == '${name}'`;
-                })
-                .join(' or ');
+            const conditions = getLiquidConditionsFromPartials(partials);
 
             return `
                 {%- if ${conditions} -%}
@@ -94,4 +108,33 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
         .join('');
 };
 
-module.exports = renderScriptTagsSnippet;
+const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
+    const cssFiles = htmlWebpackPlugin.files.css.map(filename =>
+        decodeURIComponent(path.basename(filename))
+    );
+
+    return cssFiles
+        .map(filename => {
+            const partials = getPartialsData(
+                filename,
+                htmlWebpackPlugin.options.entrypoints
+            );
+            const assetSrc = `{{ ${filename} | asset_url }}`;
+
+            const conditions = getLiquidConditionsFromPartials(partials);
+
+            return `
+                {%- if ${conditions} -%}
+                    <link href="${assetSrc}" rel="stylesheet">
+                {%- else -%}
+                    <link rel="prefetch" href="${assetSrc}" as="style">
+                {%- endif -%}
+            `;
+        })
+        .join('');
+};
+
+module.exports = {
+    renderScriptTagsSnippet,
+    renderStyleTagsSnippet,
+};
