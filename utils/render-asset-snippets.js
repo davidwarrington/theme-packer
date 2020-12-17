@@ -93,7 +93,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
                 filename,
                 htmlWebpackPlugin.options.entrypoints
             );
-            const assetSrc = `{{ ${filename} | asset_url }}`;
+            const assetSrc = `{{ '${filename}' | asset_url }}`;
 
             const conditions = getLiquidConditionsFromPartials(partials);
 
@@ -119,7 +119,7 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
                 filename,
                 htmlWebpackPlugin.options.entrypoints
             );
-            const assetSrc = `{{ ${filename} | asset_url }}`;
+            const assetSrc = `{{ '${filename}' | asset_url }}`;
 
             const conditions = getLiquidConditionsFromPartials(partials);
 
