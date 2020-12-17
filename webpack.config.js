@@ -1,9 +1,19 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getChunkName = require('./utils/get-chunk-name');
 const getEntrypoints = require('./utils/get-entrypoints');
-const renderScriptTagsSnippet = require('./utils/render-script-tags-snippet');
+const {
+    renderScriptTagsSnippet,
+    renderStyleTagsSnippet,
+} = require('./utils/render-asset-snippets');
+
+const mode =
+    process.env.NODE_ENV === 'production' ? 'production' : 'development';
+
+const finalStyleLoader =
+    mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader';
 
 module.exports = () => {
     const entrypoints = getEntrypoints();
@@ -14,13 +24,26 @@ module.exports = () => {
             filename: '[name].js',
             path: path.resolve(__dirname, 'dist', 'assets'),
         },
-        mode: 'development',
+        mode,
         module: {
             rules: [
                 {
                     test: /\.m?jsx?$/,
                     exclude: /node_modules/,
                     use: 'babel-loader',
+                },
+                {
+                    test: /\.css$/,
+                    use: [finalStyleLoader, 'css-loader', 'postcss-loader'],
+                },
+                {
+                    test: /\.s[ac]ss$/,
+                    use: [
+                        finalStyleLoader,
+                        'css-loader',
+                        'postcss-loader',
+                        'sass-loader',
+                    ],
                 },
             ],
         },
@@ -44,6 +67,21 @@ module.exports = () => {
                 },
                 templateContent: renderScriptTagsSnippet,
             }),
+            new HtmlWebpackPlugin({
+                chunksSortMode: 'auto',
+                entrypoints,
+                excludeChunks: 'static',
+                filename: '../snippets/includes.style-tags.liquid',
+                inject: false,
+                minify: {
+                    collapseWhitespace: true,
+                    preserveLineBreaks: true,
+                    removeComments: true,
+                    removeAttributeQuotes: true,
+                },
+                templateContent: renderStyleTagsSnippet,
+            }),
+            new MiniCssExtractPlugin(),
         ],
         optimization: {
             splitChunks: {
