@@ -1,5 +1,7 @@
 const chokidar = require('chokidar');
+const themeKit = require('@shopify/themekit');
 const Builder = require('./packages/Builder');
+const getShopifyEnvKeys = require('./utils/get-shopify-env-keys');
 
 const LAYOUT_DIR = 'src/scripts/layout/';
 const TEMPLATES_DIR = 'src/scripts/templates/';
@@ -7,6 +9,10 @@ const builder = new Builder();
 
 (async () => {
     await builder.start('watch');
+    themeKit.command('watch', {
+        dir: 'dist',
+        ...getShopifyEnvKeys(),
+    });
 
     chokidar
         .watch('./src', { ignoreInitial: true })
