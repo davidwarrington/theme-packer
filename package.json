@@ -1,7 +1,7 @@
 {
     "name": "shopify-webpack",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "cli.js",
     "repository": "git@github.com:davidwarrington/shopify-webpack",
     "author": "davidwarrington <davidmwarrington+github@gmail.com>",
     "license": "MIT",
@@ -17,6 +17,7 @@
         "copy-webpack-plugin": "^7.0.0",
         "css-loader": "^5.0.1",
         "cssnano": "^4.1.10",
+        "debounce-promise": "^3.1.2",
         "dotenv": "^8.2.0",
         "html-webpack-plugin": "^5.0.0-alpha.14",
         "mini-css-extract-plugin": "^1.3.3",
@@ -25,7 +26,6 @@
         "sass": "^1.30.0",
         "sass-loader": "^10.1.0",
         "style-loader": "^2.0.0",
-        "throttle-debounce": "^3.0.1",
         "webpack": "^5.10.3",
         "yargs": "^16.2.0"
     },

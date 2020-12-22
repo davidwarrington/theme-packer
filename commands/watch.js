@@ -1,16 +1,14 @@
 const chokidar = require('chokidar');
 const consola = require('consola');
 const themeKit = require('@shopify/themekit');
-const yargs = require('yargs');
-const Builder = require('./packages/Builder');
-const getShopifyEnvKeys = require('./utils/get-shopify-env-keys');
+const Builder = require('../packages/Builder');
+const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
 
-const { env } = yargs.argv;
 const LAYOUT_DIR = 'src/scripts/layout/';
 const TEMPLATES_DIR = 'src/scripts/templates/';
 const builder = new Builder();
 
-(async () => {
+const watch = async ({ env }) => {
     await builder.start('watch');
 
     try {
@@ -35,4 +33,6 @@ const builder = new Builder();
                 builder.restart('watch');
             }
         });
-})();
+};
+
+module.exports = watch;
