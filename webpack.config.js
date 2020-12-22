@@ -1,10 +1,12 @@
 const path = require('path');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getChunkName = require('./utils/get-chunk-name');
 const getEntrypoints = require('./utils/get-entrypoints');
+const getShopifyEnvKeys = require('./utils/get-shopify-env-keys');
 const {
     renderScriptTagsSnippet,
     renderStyleTagsSnippet,
@@ -15,6 +17,8 @@ const mode =
 
 const finalStyleLoader =
     mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader';
+
+const shopifyEnvKeys = getShopifyEnvKeys();
 
 module.exports = () => {
     const entrypoints = getEntrypoints();
@@ -95,6 +99,18 @@ module.exports = () => {
                 ],
             }),
             new MiniCssExtractPlugin(),
+            new BrowserSyncPlugin({
+                proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}&_fd=0&pb=0`,
+                reloadDelay: 3000,
+                snippetOptions: {
+                    rule: {
+                        match: /<\/body>/i,
+                        fn(snippet, match) {
+                            return snippet + match;
+                        },
+                    },
+                },
+            }),
         ],
         optimization: {
             splitChunks: {
