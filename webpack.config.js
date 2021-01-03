@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 const getChunkName = require('./utils/get-chunk-name');
 const getEntrypoints = require('./utils/get-entrypoints');
 const getShopifyEnvKeys = require('./utils/get-shopify-env-keys');
@@ -28,6 +29,7 @@ module.exports = () => {
         output: {
             filename: '[name].js',
             path: path.resolve(__dirname, 'dist', 'assets'),
+            publicPath: '/assets',
         },
         mode,
         module: {
@@ -100,8 +102,17 @@ module.exports = () => {
             }),
             new MiniCssExtractPlugin(),
             new BrowserSyncPlugin({
-                proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}&_fd=0&pb=0`,
-                reloadDelay: 3000,
+                middleware: [
+                    (req, res, next) => {
+                        const prefix = req.url.indexOf('?') > -1 ? '&' : '?';
+                        const queryStringComponents = ['_fd=0', 'pb=0'];
+                        req.url += prefix + queryStringComponents.join('&');
+                        next();
+                    },
+                ],
+                proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}`,
+                reloadDebounce: 1000,
+                reloadDelay: 500,
                 snippetOptions: {
                     rule: {
                         match: /<\/body>/i,
@@ -111,6 +122,7 @@ module.exports = () => {
                     },
                 },
             }),
+            new webpack.HotModuleReplacementPlugin(),
         ],
         optimization: {
             splitChunks: {

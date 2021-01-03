@@ -3,6 +3,15 @@ const path = require('path');
 const entryNameDelimiter = '@';
 const entryPartsDelimiter = '.';
 
+const mode =
+    process.env.NODE_ENV === 'production' ? 'production' : 'development';
+
+/** @param {string} filename */
+const getAssetSrc = filename =>
+    mode === 'production'
+        ? `{{ '${filename}' | asset_url }}`
+        : `http://localhost:3002/assets/${filename}`;
+
 /** @typedef {{[key: string]: string}} Entrypoints */
 /**
  * @typedef {{
@@ -38,12 +47,11 @@ const getLiquidConditionsFromPartials = partials => {
 };
 
 /**
- * @param {string} filename
+ * @param {string} entry
  * @param {Entrypoints} entrypoints
  */
-const getParentDirectory = (filename, entrypoints) => {
-    const key = path.basename(filename, path.extname(filename));
-    const dirname = path.dirname(entrypoints[key]);
+const getParentDirectory = (entry, entrypoints) => {
+    const dirname = path.dirname(entrypoints[entry]);
 
     return path.basename(dirname);
 };
@@ -54,9 +62,11 @@ const getParentDirectory = (filename, entrypoints) => {
  * @returns {ModulePartialData[]}
  */
 const getPartialsData = (filename, entrypoints) => {
-    const fileNameParts = filename
+    const fileNameParts = path
+        .basename(filename, path.extname(filename))
         .split(entryNameDelimiter)
         .filter(part => !part.startsWith('vendor'));
+
     return fileNameParts.map(partialName => {
         const [type, ...otherFileNameParts] = partialName.split(
             entryPartsDelimiter
@@ -65,7 +75,7 @@ const getPartialsData = (filename, entrypoints) => {
         let parentDirectory;
         if (type === 'templates') {
             const parentDirectoryName = getParentDirectory(
-                filename,
+                partialName,
                 entrypoints
             );
             if (parentDirectoryName !== 'templates') {
@@ -93,7 +103,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
                 filename,
                 htmlWebpackPlugin.options.entrypoints
             );
-            const assetSrc = `{{ '${filename}' | asset_url }}`;
+            const assetSrc = getAssetSrc(filename);
 
             const conditions = getLiquidConditionsFromPartials(partials);
 
@@ -119,7 +129,7 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
                 filename,
                 htmlWebpackPlugin.options.entrypoints
             );
-            const assetSrc = `{{ '${filename}' | asset_url }}`;
+            const assetSrc = getAssetSrc(filename);
 
             const conditions = getLiquidConditionsFromPartials(partials);
 
