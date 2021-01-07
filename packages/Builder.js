@@ -1,7 +1,6 @@
 const consola = require('consola');
 const debounce = require('debounce-promise');
 const webpack = require('webpack');
-const AssetServer = require('./AssetServer');
 const getWebpackConfig = require('../webpack.config');
 const logWebpackIssues = require('../utils/log-webpack-issues');
 
@@ -14,7 +13,6 @@ const STATES = {
 
 class Builder {
     constructor() {
-        this.assetServer = null;
         this.compiler = null;
         this.state = STATES.IDLE;
 
@@ -42,9 +40,6 @@ class Builder {
                 }
             });
 
-            this.assetServer = new AssetServer().createApp(this.compiler);
-            await this.assetServer.start(3002);
-
             return Promise.resolve();
         }
 
@@ -70,11 +65,6 @@ class Builder {
     }
 
     async close() {
-        if (this.assetServer) {
-            await this.assetServer.close();
-            this.assetServer = null;
-        }
-
         if (!this.compiler) {
             this.state = STATES.IDLE;
             return Promise.resolve();

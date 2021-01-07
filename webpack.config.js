@@ -1,13 +1,15 @@
 const path = require('path');
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const getChunkName = require('./utils/get-chunk-name');
-const getEntrypoints = require('./utils/get-entrypoints');
-const getShopifyEnvKeys = require('./utils/get-shopify-env-keys');
+const {
+    addHmrToEntrypoints,
+    convertEntrypointsToArrays,
+    getEntrypoints,
+} = require('./utils/get-entrypoints');
 const {
     renderScriptTagsSnippet,
     renderStyleTagsSnippet,
@@ -19,17 +21,19 @@ const mode =
 const finalStyleLoader =
     mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader';
 
-const shopifyEnvKeys = getShopifyEnvKeys();
-
 module.exports = () => {
     const entrypoints = getEntrypoints();
+    const entry =
+        mode === 'development'
+            ? addHmrToEntrypoints(entrypoints)
+            : convertEntrypointsToArrays(entrypoints);
 
-    return {
-        entry: entrypoints,
+    const config = {
+        entry,
         output: {
             filename: '[name].js',
             path: path.resolve(__dirname, 'dist', 'assets'),
-            publicPath: '/assets',
+            publicPath: '/assets/',
         },
         mode,
         module: {
@@ -62,8 +66,8 @@ module.exports = () => {
             }),
             new HtmlWebpackPlugin({
                 chunksSortMode: 'auto',
-                entrypoints,
-                excludeChunks: 'static',
+                entrypoints: entry,
+                excludeChunks: ['static'],
                 filename: '../snippets/includes.script-tags.liquid',
                 inject: false,
                 minify: {
@@ -72,12 +76,13 @@ module.exports = () => {
                     removeComments: true,
                     removeAttributeQuotes: true,
                 },
+                mode,
                 templateContent: renderScriptTagsSnippet,
             }),
             new HtmlWebpackPlugin({
                 chunksSortMode: 'auto',
-                entrypoints,
-                excludeChunks: 'static',
+                entrypoints: entry,
+                excludeChunks: ['static'],
                 filename: '../snippets/includes.style-tags.liquid',
                 inject: false,
                 minify: {
@@ -86,6 +91,7 @@ module.exports = () => {
                     removeComments: true,
                     removeAttributeQuotes: true,
                 },
+                mode,
                 templateContent: renderStyleTagsSnippet,
             }),
             new CopyWebpackPlugin({
@@ -101,34 +107,18 @@ module.exports = () => {
                 ],
             }),
             new MiniCssExtractPlugin(),
-            new BrowserSyncPlugin({
-                middleware: [
-                    (req, res, next) => {
-                        const prefix = req.url.indexOf('?') > -1 ? '&' : '?';
-                        const queryStringComponents = ['_fd=0', 'pb=0'];
-                        req.url += prefix + queryStringComponents.join('&');
-                        next();
-                    },
-                ],
-                proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}`,
-                reloadDebounce: 1000,
-                reloadDelay: 500,
-                snippetOptions: {
-                    rule: {
-                        match: /<\/body>/i,
-                        fn(snippet, match) {
-                            return snippet + match;
-                        },
-                    },
-                },
-            }),
             new webpack.HotModuleReplacementPlugin(),
         ],
-        optimization: {
+    };
+
+    if (mode === 'production') {
+        config.optimization = {
             splitChunks: {
                 chunks: 'initial',
                 name: getChunkName,
             },
-        },
-    };
+        };
+    }
+
+    return config;
 };
