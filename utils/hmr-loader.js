@@ -10,7 +10,7 @@ const getJSEntries = entrypoints =>
     }, []);
 
 function hmrLoader(source) {
-    const entrypoints = getJSEntries(this.query.entrypoints);
+    const entrypoints = getJSEntries(this.getOptions().entrypoints);
 
     // eslint-disable-next-line no-underscore-dangle
     if (!entrypoints.includes(this._module.resource)) {
