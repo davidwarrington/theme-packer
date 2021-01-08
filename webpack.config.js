@@ -135,6 +135,8 @@ module.exports = () => {
             minimize: false,
             runtimeChunk: 'single',
         };
+
+        config.stats = 'errors-warnings';
     }
 
     return config;
