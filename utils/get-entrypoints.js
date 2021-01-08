@@ -34,10 +34,6 @@ const convertEntrypointsToArrays = entrypoints => {
     return Object.fromEntries(entries);
 };
 
-/**
- * This module is basically just a rewrite of the {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js|Slate v1 get-entrypoints utilities}.
- */
-
 const VALID_LIQUID_TEMPLATES = [
     '404',
     'article',
@@ -67,6 +63,10 @@ const isValidTemplate = filename => {
     );
 };
 
+/**
+ * getEntrypoints is basically just a rewrite of the
+ * {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js|Slate v1 get-entrypoints utilities}.
+ */
 const getEntrypoints = () => {
     const entrypoints = {};
 

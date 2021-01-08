@@ -28,6 +28,14 @@ module.exports = () => {
             ? addHmrToEntrypoints(entrypoints)
             : convertEntrypointsToArrays(entrypoints);
 
+    const jsLoaders = ['babel-loader'];
+    if (mode !== 'production') {
+        jsLoaders.push({
+            loader: path.resolve('./utils/hmr-loader'),
+            options: { entrypoints },
+        });
+    }
+
     const config = {
         entry,
         output: {
@@ -41,7 +49,7 @@ module.exports = () => {
                 {
                     test: /\.m?jsx?$/,
                     exclude: /node_modules/,
-                    use: 'babel-loader',
+                    use: jsLoaders,
                 },
                 {
                     test: /\.css$/,
@@ -117,6 +125,15 @@ module.exports = () => {
                 chunks: 'initial',
                 name: getChunkName,
             },
+        };
+    } else {
+        /**
+         * @warning This is only a temporary fix.
+         * @see {@link https://github.com/webpack/webpack-dev-server/issues/2792|Related GitHub Issue}
+         */
+        config.optimization = {
+            minimize: false,
+            runtimeChunk: 'single',
         };
     }
 

@@ -99,10 +99,18 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
 
     return jsFiles
         .map(filename => {
+            if (filename === 'runtime.js') {
+                return `<script src="${getAssetSrc(
+                    filename,
+                    htmlWebpackPlugin.options.entrypoints
+                )}"></script>`;
+            }
+
             const partials = getPartialsData(
                 filename,
                 htmlWebpackPlugin.options.entrypoints
             );
+
             const assetSrc = getAssetSrc(
                 filename,
                 htmlWebpackPlugin.options.mode
