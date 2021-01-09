@@ -29,11 +29,65 @@ module.exports = () => {
             : convertEntrypointsToArrays(entrypoints);
 
     const jsLoaders = ['babel-loader'];
-    if (mode !== 'production') {
+
+    const plugins = [
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: [
+                path.join(process.cwd(), 'dist/**/*'),
+            ],
+        }),
+        new HtmlWebpackPlugin({
+            chunksSortMode: 'auto',
+            entrypoints: entry,
+            excludeChunks: ['static'],
+            filename: '../snippets/includes.script-tags.liquid',
+            inject: false,
+            minify: {
+                collapseWhitespace: true,
+                preserveLineBreaks: true,
+                removeComments: true,
+                removeAttributeQuotes: true,
+            },
+            mode,
+            templateContent: renderScriptTagsSnippet,
+        }),
+        new HtmlWebpackPlugin({
+            chunksSortMode: 'auto',
+            entrypoints: entry,
+            excludeChunks: ['static'],
+            filename: '../snippets/includes.style-tags.liquid',
+            inject: false,
+            minify: {
+                collapseWhitespace: true,
+                preserveLineBreaks: true,
+                removeComments: true,
+                removeAttributeQuotes: true,
+            },
+            mode,
+            templateContent: renderStyleTagsSnippet,
+        }),
+        new CopyWebpackPlugin({
+            /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
+            patterns: [
+                { from: './src/assets/', to: '[name].[ext]' },
+                { from: './src/config/', to: '../config/' },
+                { from: './src/layout/', to: '../layout/' },
+                { from: './src/locales/', to: '../locales/' },
+                { from: './src/sections/', to: '../sections/' },
+                { from: './src/snippets/', to: '../snippets/' },
+                { from: './src/templates/', to: '../templates/' },
+            ],
+        }),
+        new MiniCssExtractPlugin(),
+    ];
+
+    if (mode === 'development') {
         jsLoaders.push({
             loader: path.resolve('./utils/hmr-loader'),
             options: { entrypoints },
         });
+
+        plugins.push(new webpack.HotModuleReplacementPlugin());
     }
 
     const config = {
@@ -66,57 +120,7 @@ module.exports = () => {
                 },
             ],
         },
-        plugins: [
-            new CleanWebpackPlugin({
-                cleanOnceBeforeBuildPatterns: [
-                    path.join(process.cwd(), 'dist/**/*'),
-                ],
-            }),
-            new HtmlWebpackPlugin({
-                chunksSortMode: 'auto',
-                entrypoints: entry,
-                excludeChunks: ['static'],
-                filename: '../snippets/includes.script-tags.liquid',
-                inject: false,
-                minify: {
-                    collapseWhitespace: true,
-                    preserveLineBreaks: true,
-                    removeComments: true,
-                    removeAttributeQuotes: true,
-                },
-                mode,
-                templateContent: renderScriptTagsSnippet,
-            }),
-            new HtmlWebpackPlugin({
-                chunksSortMode: 'auto',
-                entrypoints: entry,
-                excludeChunks: ['static'],
-                filename: '../snippets/includes.style-tags.liquid',
-                inject: false,
-                minify: {
-                    collapseWhitespace: true,
-                    preserveLineBreaks: true,
-                    removeComments: true,
-                    removeAttributeQuotes: true,
-                },
-                mode,
-                templateContent: renderStyleTagsSnippet,
-            }),
-            new CopyWebpackPlugin({
-                /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
-                patterns: [
-                    { from: './src/assets/', to: '[name].[ext]' },
-                    { from: './src/config/', to: '../config/' },
-                    { from: './src/layout/', to: '../layout/' },
-                    { from: './src/locales/', to: '../locales/' },
-                    { from: './src/sections/', to: '../sections/' },
-                    { from: './src/snippets/', to: '../snippets/' },
-                    { from: './src/templates/', to: '../templates/' },
-                ],
-            }),
-            new MiniCssExtractPlugin(),
-            new webpack.HotModuleReplacementPlugin(),
-        ],
+        plugins,
     };
 
     if (mode === 'production') {
