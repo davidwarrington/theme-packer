@@ -3,8 +3,13 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 const getChunkName = require('./utils/get-chunk-name');
-const getEntrypoints = require('./utils/get-entrypoints');
+const {
+    addHmrToEntrypoints,
+    convertEntrypointsToArrays,
+    getEntrypoints,
+} = require('./utils/get-entrypoints');
 const {
     renderScriptTagsSnippet,
     renderStyleTagsSnippet,
@@ -18,12 +23,79 @@ const finalStyleLoader =
 
 module.exports = () => {
     const entrypoints = getEntrypoints();
+    const entry =
+        mode === 'development'
+            ? addHmrToEntrypoints(entrypoints)
+            : convertEntrypointsToArrays(entrypoints);
 
-    return {
-        entry: entrypoints,
+    const jsLoaders = ['babel-loader'];
+
+    const plugins = [
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: [
+                path.join(process.cwd(), 'dist/**/*'),
+            ],
+        }),
+        new HtmlWebpackPlugin({
+            chunksSortMode: 'auto',
+            entrypoints: entry,
+            excludeChunks: ['static'],
+            filename: '../snippets/includes.script-tags.liquid',
+            inject: false,
+            minify: {
+                collapseWhitespace: true,
+                preserveLineBreaks: true,
+                removeComments: true,
+                removeAttributeQuotes: true,
+            },
+            mode,
+            templateContent: renderScriptTagsSnippet,
+        }),
+        new HtmlWebpackPlugin({
+            chunksSortMode: 'auto',
+            entrypoints: entry,
+            excludeChunks: ['static'],
+            filename: '../snippets/includes.style-tags.liquid',
+            inject: false,
+            minify: {
+                collapseWhitespace: true,
+                preserveLineBreaks: true,
+                removeComments: true,
+                removeAttributeQuotes: true,
+            },
+            mode,
+            templateContent: renderStyleTagsSnippet,
+        }),
+        new CopyWebpackPlugin({
+            /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
+            patterns: [
+                { from: './src/assets/', to: '[name].[ext]' },
+                { from: './src/config/', to: '../config/' },
+                { from: './src/layout/', to: '../layout/' },
+                { from: './src/locales/', to: '../locales/' },
+                { from: './src/sections/', to: '../sections/' },
+                { from: './src/snippets/', to: '../snippets/' },
+                { from: './src/templates/', to: '../templates/' },
+            ],
+        }),
+        new MiniCssExtractPlugin(),
+    ];
+
+    if (mode === 'development') {
+        jsLoaders.push({
+            loader: path.resolve('./utils/hmr-loader'),
+            options: { entrypoints },
+        });
+
+        plugins.push(new webpack.HotModuleReplacementPlugin());
+    }
+
+    const config = {
+        entry,
         output: {
             filename: '[name].js',
             path: path.resolve(__dirname, 'dist', 'assets'),
+            publicPath: '/assets/',
         },
         mode,
         module: {
@@ -31,7 +103,7 @@ module.exports = () => {
                 {
                     test: /\.m?jsx?$/,
                     exclude: /node_modules/,
-                    use: 'babel-loader',
+                    use: jsLoaders,
                 },
                 {
                     test: /\.css$/,
@@ -48,59 +120,28 @@ module.exports = () => {
                 },
             ],
         },
-        plugins: [
-            new CleanWebpackPlugin({
-                cleanOnceBeforeBuildPatterns: [
-                    path.join(process.cwd(), 'dist/**/*'),
-                ],
-            }),
-            new HtmlWebpackPlugin({
-                chunksSortMode: 'auto',
-                entrypoints,
-                excludeChunks: 'static',
-                filename: '../snippets/includes.script-tags.liquid',
-                inject: false,
-                minify: {
-                    collapseWhitespace: true,
-                    preserveLineBreaks: true,
-                    removeComments: true,
-                    removeAttributeQuotes: true,
-                },
-                templateContent: renderScriptTagsSnippet,
-            }),
-            new HtmlWebpackPlugin({
-                chunksSortMode: 'auto',
-                entrypoints,
-                excludeChunks: 'static',
-                filename: '../snippets/includes.style-tags.liquid',
-                inject: false,
-                minify: {
-                    collapseWhitespace: true,
-                    preserveLineBreaks: true,
-                    removeComments: true,
-                    removeAttributeQuotes: true,
-                },
-                templateContent: renderStyleTagsSnippet,
-            }),
-            new CopyWebpackPlugin({
-                /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
-                patterns: [
-                    { from: './src/assets/', to: '[name].[ext]' },
-                    { from: './src/config/', to: '../config/' },
-                    { from: './src/layout/', to: '../layout/' },
-                    { from: './src/locales/', to: '../locales/' },
-                    { from: './src/sections/', to: '../sections/' },
-                    { from: './src/snippets/', to: '../snippets/' },
-                    { from: './src/templates/', to: '../templates/' },
-                ],
-            }),
-            new MiniCssExtractPlugin(),
-        ],
-        optimization: {
+        plugins,
+    };
+
+    if (mode === 'production') {
+        config.optimization = {
             splitChunks: {
                 chunks: 'initial',
                 name: getChunkName,
             },
-        },
-    };
+        };
+    } else {
+        /**
+         * @warning This is only a temporary fix.
+         * @see {@link https://github.com/webpack/webpack-dev-server/issues/2792|Related GitHub Issue}
+         */
+        config.optimization = {
+            minimize: false,
+            runtimeChunk: 'single',
+        };
+
+        config.stats = 'errors-warnings';
+    }
+
+    return config;
 };

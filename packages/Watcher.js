@@ -1,0 +1,75 @@
+const browserSync = require('browser-sync');
+const consola = require('consola');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
+const getWebpackConfig = require('../webpack.config');
+
+const isHotUpdateFile = filepath => /\.hot-update\.js(on)?$/.test(filepath);
+
+const shopifyEnvKeys = getShopifyEnvKeys();
+
+class Watcher {
+    constructor() {
+        this.app = null;
+    }
+
+    /** @returns {browserSync.BrowserSyncInstance} */
+    async start() {
+        const config = getWebpackConfig();
+        const compiler = webpack(config);
+
+        const devMiddleware = webpackDevMiddleware(compiler, {
+            publicPath: config.output.publicPath,
+            writeToDisk: filepath => !isHotUpdateFile(filepath),
+        });
+        const hotMiddleware = webpackHotMiddleware(compiler);
+        const addQueryParams = (req, res, next) => {
+            const prefix = req.url.indexOf('?') > -1 ? '&' : '?';
+            const queryStringComponents = ['_fd=0', 'pb=0'];
+            req.url += prefix + queryStringComponents.join('&');
+            next();
+        };
+
+        const middleware = [devMiddleware, hotMiddleware, addQueryParams];
+
+        this.app = browserSync.create();
+
+        this.app.init(
+            {
+                baseDir: compiler.outputPath,
+                https: true,
+                middleware,
+                port: 3000,
+                proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}`,
+                reloadDebounce: 1000,
+                snippetOptions: {
+                    rule: {
+                        match: /<\/body>/i,
+                        fn(snippet, match) {
+                            return snippet + match;
+                        },
+                    },
+                },
+            },
+            (error, instance) => {
+                if (error) {
+                    consola.error(error);
+                    Promise.reject(error);
+                } else {
+                    consola.success('Server launched.');
+                    Promise.resolve(instance);
+                }
+            }
+        );
+    }
+
+    async close() {
+        await this.app.exit();
+        consola.success('Server closed.');
+        Promise.resolve();
+    }
+}
+
+module.exports = Watcher;

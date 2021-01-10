@@ -1,16 +1,13 @@
 const chokidar = require('chokidar');
 const consola = require('consola');
 const themeKit = require('@shopify/themekit');
-const Builder = require('../packages/Builder');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
+const Watcher = require('../packages/Watcher');
 
 const LAYOUT_DIR = 'src/scripts/layout/';
 const TEMPLATES_DIR = 'src/scripts/templates/';
-const builder = new Builder();
 
 const watch = async ({ env }) => {
-    await builder.start('watch');
-
     try {
         themeKit.command('watch', {
             dir: 'dist',
@@ -19,6 +16,9 @@ const watch = async ({ env }) => {
     } catch (error) {
         consola.error(error);
     }
+
+    const server = new Watcher();
+    await server.start();
 
     chokidar
         .watch('./src', { ignoreInitial: true })
@@ -30,7 +30,8 @@ const watch = async ({ env }) => {
             const restartEvent = ['add', 'unlink'].includes(event);
 
             if (changeInLayoutOrTemplatesDir && restartEvent) {
-                builder.restart('watch');
+                await server.close();
+                server.start();
             }
         });
 };

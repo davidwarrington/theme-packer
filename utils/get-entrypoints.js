@@ -3,8 +3,36 @@ const path = require('path');
 const consola = require('consola');
 
 /**
- * This module is basically just a rewrite of the {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js|Slate v1 get-entrypoints utilities}.
+ * @param {{[key: string]: string|string[]}} entrypoints
+ * @returns {{[key: string]: string[]}}
  */
+const addHmrToEntrypoints = entrypoints => {
+    const entries = Object.entries(entrypoints).map(([key, value]) => {
+        let newValue = value;
+        if (!Array.isArray(newValue)) {
+            newValue = [newValue];
+        }
+
+        newValue.push('webpack-hot-middleware/client');
+
+        return [key, newValue];
+    });
+
+    return Object.fromEntries(entries);
+};
+
+/**
+ * @param {{[key: string]: string|string[]}} entrypoints
+ * @returns {{[key: string]: string[]}}
+ */
+const convertEntrypointsToArrays = entrypoints => {
+    const entries = Object.entries(entrypoints).map(([key, value]) => [
+        key,
+        [value].flat(),
+    ]);
+
+    return Object.fromEntries(entries);
+};
 
 const VALID_LIQUID_TEMPLATES = [
     '404',
@@ -35,6 +63,10 @@ const isValidTemplate = filename => {
     );
 };
 
+/**
+ * getEntrypoints is basically just a rewrite of the
+ * {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js|Slate v1 get-entrypoints utilities}.
+ */
 const getEntrypoints = () => {
     const entrypoints = {};
 
@@ -71,4 +103,8 @@ const getEntrypoints = () => {
     return entrypoints;
 };
 
-module.exports = getEntrypoints;
+module.exports = {
+    addHmrToEntrypoints,
+    convertEntrypointsToArrays,
+    getEntrypoints,
+};
