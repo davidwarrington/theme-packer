@@ -1,3 +1,4 @@
+const path = require('path');
 const chokidar = require('chokidar');
 const consola = require('consola');
 const themeKit = require('@shopify/themekit');
@@ -10,6 +11,7 @@ const TEMPLATES_DIR = 'src/scripts/templates/';
 const watch = async ({ env }) => {
     try {
         themeKit.command('watch', {
+            config: path.resolve(__dirname, '..', 'config.yml'),
             dir: 'dist',
             ...getShopifyEnvKeys(env),
         });
