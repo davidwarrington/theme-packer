@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const yargs = require('yargs');
 const build = require('./commands/build');
 const deploy = require('./commands/deploy');
