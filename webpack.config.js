@@ -83,7 +83,7 @@ module.exports = () => {
 
     if (mode === 'development') {
         jsLoaders.push({
-            loader: path.resolve('./utils/hmr-loader'),
+            loader: path.resolve(__dirname, './utils/hmr-loader'),
             options: { entrypoints },
         });
 
@@ -94,8 +94,14 @@ module.exports = () => {
         entry,
         output: {
             filename: '[name].js',
-            path: path.resolve(__dirname, 'dist', 'assets'),
+            path: path.resolve(process.cwd(), 'dist', 'assets'),
             publicPath: '/assets/',
+        },
+        resolveLoader: {
+            modules: [
+                path.resolve(__dirname, 'node_modules'),
+                path.resolve('node_modules'),
+            ],
         },
         mode,
         module: {
