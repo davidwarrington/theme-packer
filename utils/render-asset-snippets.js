@@ -1,5 +1,15 @@
 const path = require('path');
 
+/** @typedef {{[key: string]: string}} Entrypoints */
+/**
+ * @typedef {{
+ *  entrypoint: string;
+ *  filename: string;
+ *  parentDirectory?: string;
+ *  type: string;
+ * }} ModulePartialData
+ */
+
 const entryNameDelimiter = '@';
 const entryPartsDelimiter = '.';
 
@@ -11,16 +21,6 @@ const getAssetSrc = (filename, mode) =>
     mode === 'production'
         ? `{{ '${filename}' | asset_url }}`
         : `https://localhost:3000/assets/${filename}`;
-
-/** @typedef {{[key: string]: string}} Entrypoints */
-/**
- * @typedef {{
- *  entrypoint: string;
- *  filename: string;
- *  parentDirectory?: string;
- *  type: string;
- * }} ModulePartialData
- */
 
 /**
  * @param {string} type
