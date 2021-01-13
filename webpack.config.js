@@ -33,14 +33,17 @@ module.exports = () => {
     const plugins = [
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [
-                path.join(process.cwd(), 'dist/**/*'),
+                path.join(Config.get('paths.theme.dist'), '/**/*'),
             ],
         }),
         new HtmlWebpackPlugin({
             chunksSortMode: 'auto',
             entrypoints: entry,
             excludeChunks: ['static'],
-            filename: '../snippets/includes.script-tags.liquid',
+            filename: path.join(
+                Config.get('paths.theme.dist.snippets'),
+                'includes.script-tags.liquid'
+            ),
             inject: false,
             minify: {
                 collapseWhitespace: true,
@@ -54,7 +57,10 @@ module.exports = () => {
             chunksSortMode: 'auto',
             entrypoints: entry,
             excludeChunks: ['static'],
-            filename: '../snippets/includes.style-tags.liquid',
+            filename: path.join(
+                Config.get('paths.theme.dist.snippets'),
+                'includes.style-tags.liquid'
+            ),
             inject: false,
             minify: {
                 collapseWhitespace: true,
