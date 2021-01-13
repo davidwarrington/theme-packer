@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const consola = require('consola');
+const Config = require('../packages/Config');
 
 /**
  * @param {{[key: string]: string|string[]}} entrypoints
@@ -71,17 +72,22 @@ const getEntrypoints = () => {
     const entrypoints = {};
 
     const entrypointsMap = {
-        layout: fs.readdirSync('./src/scripts/layout'),
-        templates: fs.readdirSync('./src/scripts/templates'),
+        layout: fs.readdirSync(Config.get('paths.theme.src.scripts.layout')),
+        templates: fs.readdirSync(
+            Config.get('paths.theme.src.scripts.templates')
+        ),
         'templates/customers': fs.readdirSync(
-            './src/scripts/templates/customers'
+            Config.get('paths.theme.src.scripts.templates.customers')
         ),
     };
 
     Object.keys(entrypointsMap).forEach(key => {
         entrypointsMap[key].forEach(file => {
             const { name } = path.parse(file);
-            const entryFile = path.join('./src/scripts', key, `${name}.js`);
+            const entryFile = path.join(
+                Config.get(`paths.theme.src.scripts.${key.replace('/', '.')}`),
+                `${name}.js`
+            );
             const entryType = key.split('/')[0];
 
             // Ignore directories
@@ -94,7 +100,7 @@ const getEntrypoints = () => {
                 return;
             }
 
-            entrypoints[`${entryType}.${name}`] = `./${entryFile}`;
+            entrypoints[`${entryType}.${name}`] = entryFile;
         });
     });
 
