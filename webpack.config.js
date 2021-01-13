@@ -73,13 +73,34 @@ module.exports = () => {
         new CopyWebpackPlugin({
             /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
             patterns: [
-                { from: './src/assets/', to: '[name].[ext]' },
-                { from: './src/config/', to: '../config/' },
-                { from: './src/layout/', to: '../layout/' },
-                { from: './src/locales/', to: '../locales/' },
-                { from: './src/sections/', to: '../sections/' },
-                { from: './src/snippets/', to: '../snippets/' },
-                { from: './src/templates/', to: '../templates/' },
+                {
+                    from: Config.get('paths.theme.src.assets'),
+                    to: '[name].[ext]',
+                },
+                {
+                    from: Config.get('paths.theme.src.config'),
+                    to: Config.get('paths.theme.dist.config'),
+                },
+                {
+                    from: Config.get('paths.theme.src.layout'),
+                    to: Config.get('paths.theme.dist.layout'),
+                },
+                {
+                    from: Config.get('paths.theme.src.locales'),
+                    to: Config.get('paths.theme.dist.locales'),
+                },
+                {
+                    from: Config.get('paths.theme.src.sections'),
+                    to: Config.get('paths.theme.dist.sections'),
+                },
+                {
+                    from: Config.get('paths.theme.src.snippets'),
+                    to: Config.get('paths.theme.dist.snippets'),
+                },
+                {
+                    from: Config.get('paths.theme.src.templates'),
+                    to: Config.get('paths.theme.dist.templates'),
+                },
             ],
         }),
         new MiniCssExtractPlugin(),
@@ -98,7 +119,7 @@ module.exports = () => {
         entry,
         output: {
             filename: '[name].js',
-            path: path.resolve(process.cwd(), 'dist', 'assets'),
+            path: Config.get('paths.theme.dist.assets'),
             publicPath: '/assets/',
         },
         resolveLoader: {
