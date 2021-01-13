@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
+const Config = require('./packages/Config');
 const getChunkName = require('./utils/get-chunk-name');
 const {
     addHmrToEntrypoints,
@@ -15,8 +16,7 @@ const {
     renderStyleTagsSnippet,
 } = require('./utils/render-asset-snippets');
 
-const mode =
-    process.env.NODE_ENV === 'production' ? 'production' : 'development';
+const mode = Config.get('app.mode');
 
 const finalStyleLoader =
     mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader';
@@ -48,7 +48,6 @@ module.exports = () => {
                 removeComments: true,
                 removeAttributeQuotes: true,
             },
-            mode,
             templateContent: renderScriptTagsSnippet,
         }),
         new HtmlWebpackPlugin({
@@ -63,7 +62,6 @@ module.exports = () => {
                 removeComments: true,
                 removeAttributeQuotes: true,
             },
-            mode,
             templateContent: renderStyleTagsSnippet,
         }),
         new CopyWebpackPlugin({

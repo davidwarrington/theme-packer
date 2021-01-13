@@ -13,12 +13,10 @@ const Config = require('../packages/Config');
 
 const entryNameDelimiter = '@';
 const entryPartsDelimiter = '.';
+const mode = Config.get('app.mode');
 
-/**
- * @param {string} filename
- * @param {'development'|'production'} mode
- */
-const getAssetSrc = (filename, mode) =>
+/** @param {string} filename */
+const getAssetSrc = filename =>
     mode === 'production'
         ? `{{ '${filename}' | asset_url }}`
         : `https://localhost:${Config.get('server.port')}/assets/${filename}`;
@@ -101,10 +99,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
     return jsFiles
         .map(filename => {
             if (filename === 'runtime.js') {
-                return `<script src="${getAssetSrc(
-                    filename,
-                    htmlWebpackPlugin.options.entrypoints
-                )}"></script>`;
+                return `<script src="${getAssetSrc(filename)}"></script>`;
             }
 
             const partials = getPartialsData(
@@ -112,10 +107,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
                 htmlWebpackPlugin.options.entrypoints
             );
 
-            const assetSrc = getAssetSrc(
-                filename,
-                htmlWebpackPlugin.options.mode
-            );
+            const assetSrc = getAssetSrc(filename);
 
             const conditions = getLiquidConditionsFromPartials(partials);
 
@@ -141,10 +133,7 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
                 filename,
                 htmlWebpackPlugin.options.entrypoints
             );
-            const assetSrc = getAssetSrc(
-                filename,
-                htmlWebpackPlugin.options.mode
-            );
+            const assetSrc = getAssetSrc(filename);
 
             const conditions = getLiquidConditionsFromPartials(partials);
 

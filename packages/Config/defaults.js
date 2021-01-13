@@ -2,6 +2,11 @@ const path = require('path');
 
 /** @typedef {import('./index')} Config */
 
+const app = {
+    'app.mode':
+        process.env.NODE_ENV === 'production' ? 'production' : 'development',
+};
+
 const paths = {
     'paths.theme': process.cwd(),
 
@@ -117,6 +122,7 @@ const server = {
 };
 
 module.exports = {
+    app,
     paths,
     server,
 };
