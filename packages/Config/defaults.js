@@ -121,8 +121,13 @@ const server = {
     'server.port': 3000,
 };
 
+const webpack = {
+    'webpack.extend': {},
+};
+
 module.exports = {
     app,
     paths,
     server,
+    webpack,
 };

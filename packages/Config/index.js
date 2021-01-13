@@ -1,4 +1,5 @@
-const { app, paths, server } = require('./defaults');
+const { app, paths, server, webpack } = require('./defaults');
+const getUserConfig = require('../../utils/get-user-config');
 
 class Config {
     constructor() {
@@ -6,6 +7,8 @@ class Config {
             ...app,
             ...paths,
             ...server,
+            ...webpack,
+            ...getUserConfig(),
         };
     }
 

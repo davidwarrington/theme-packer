@@ -2,6 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const Config = require('./packages/Config');
@@ -174,5 +175,5 @@ module.exports = () => {
         config.stats = 'errors-warnings';
     }
 
-    return config;
+    return merge(config, Config.get('webpack.extend'));
 };
