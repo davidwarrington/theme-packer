@@ -1,4 +1,5 @@
 const path = require('path');
+const Config = require('../packages/Config');
 
 /** @typedef {{[key: string]: string}} Entrypoints */
 /**
@@ -20,7 +21,7 @@ const entryPartsDelimiter = '.';
 const getAssetSrc = (filename, mode) =>
     mode === 'production'
         ? `{{ '${filename}' | asset_url }}`
-        : `https://localhost:3000/assets/${filename}`;
+        : `https://localhost:${Config.get('server.port')}/assets/${filename}`;
 
 /**
  * @param {string} type

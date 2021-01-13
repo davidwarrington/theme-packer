@@ -1,8 +1,11 @@
-const defaults = require('./defaults');
+const { paths, server } = require('./defaults');
 
 class Config {
     constructor() {
-        this.data = defaults;
+        this.data = {
+            ...paths,
+            ...server,
+        };
     }
 
     /** @param {string} key */

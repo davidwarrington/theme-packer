@@ -3,6 +3,7 @@ const consola = require('consola');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+const Config = require('./Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
 const getWebpackConfig = require('../webpack.config');
 
@@ -41,7 +42,7 @@ class Watcher {
                 baseDir: compiler.outputPath,
                 https: true,
                 middleware,
-                port: 3000,
+                port: Config.get('server.port'),
                 proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}`,
                 reloadDebounce: 1000,
                 snippetOptions: {

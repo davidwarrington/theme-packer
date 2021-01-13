@@ -112,4 +112,11 @@ const paths = {
         path.join(config.get('paths.theme.dist.templates'), 'customers'),
 };
 
-module.exports = paths;
+const server = {
+    'server.port': 3000,
+};
+
+module.exports = {
+    paths,
+    server,
+};
