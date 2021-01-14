@@ -2,8 +2,10 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
+const Config = require('./packages/Config');
 const getChunkName = require('./utils/get-chunk-name');
 const {
     addHmrToEntrypoints,
@@ -15,8 +17,7 @@ const {
     renderStyleTagsSnippet,
 } = require('./utils/render-asset-snippets');
 
-const mode =
-    process.env.NODE_ENV === 'production' ? 'production' : 'development';
+const mode = Config.get('app.mode');
 
 const finalStyleLoader =
     mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader';
@@ -33,14 +34,17 @@ module.exports = () => {
     const plugins = [
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [
-                path.join(process.cwd(), 'dist/**/*'),
+                path.join(Config.get('paths.theme.dist'), '/**/*'),
             ],
         }),
         new HtmlWebpackPlugin({
             chunksSortMode: 'auto',
             entrypoints: entry,
             excludeChunks: ['static'],
-            filename: '../snippets/includes.script-tags.liquid',
+            filename: path.join(
+                Config.get('paths.theme.dist.snippets'),
+                'includes.script-tags.liquid'
+            ),
             inject: false,
             minify: {
                 collapseWhitespace: true,
@@ -48,14 +52,16 @@ module.exports = () => {
                 removeComments: true,
                 removeAttributeQuotes: true,
             },
-            mode,
             templateContent: renderScriptTagsSnippet,
         }),
         new HtmlWebpackPlugin({
             chunksSortMode: 'auto',
             entrypoints: entry,
             excludeChunks: ['static'],
-            filename: '../snippets/includes.style-tags.liquid',
+            filename: path.join(
+                Config.get('paths.theme.dist.snippets'),
+                'includes.style-tags.liquid'
+            ),
             inject: false,
             minify: {
                 collapseWhitespace: true,
@@ -63,19 +69,39 @@ module.exports = () => {
                 removeComments: true,
                 removeAttributeQuotes: true,
             },
-            mode,
             templateContent: renderStyleTagsSnippet,
         }),
         new CopyWebpackPlugin({
             /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
             patterns: [
-                { from: './src/assets/', to: '[name].[ext]' },
-                { from: './src/config/', to: '../config/' },
-                { from: './src/layout/', to: '../layout/' },
-                { from: './src/locales/', to: '../locales/' },
-                { from: './src/sections/', to: '../sections/' },
-                { from: './src/snippets/', to: '../snippets/' },
-                { from: './src/templates/', to: '../templates/' },
+                {
+                    from: Config.get('paths.theme.src.assets'),
+                    to: '[name].[ext]',
+                },
+                {
+                    from: Config.get('paths.theme.src.config'),
+                    to: Config.get('paths.theme.dist.config'),
+                },
+                {
+                    from: Config.get('paths.theme.src.layout'),
+                    to: Config.get('paths.theme.dist.layout'),
+                },
+                {
+                    from: Config.get('paths.theme.src.locales'),
+                    to: Config.get('paths.theme.dist.locales'),
+                },
+                {
+                    from: Config.get('paths.theme.src.sections'),
+                    to: Config.get('paths.theme.dist.sections'),
+                },
+                {
+                    from: Config.get('paths.theme.src.snippets'),
+                    to: Config.get('paths.theme.dist.snippets'),
+                },
+                {
+                    from: Config.get('paths.theme.src.templates'),
+                    to: Config.get('paths.theme.dist.templates'),
+                },
             ],
         }),
         new MiniCssExtractPlugin(),
@@ -94,7 +120,7 @@ module.exports = () => {
         entry,
         output: {
             filename: '[name].js',
-            path: path.resolve(process.cwd(), 'dist', 'assets'),
+            path: Config.get('paths.theme.dist.assets'),
             publicPath: '/assets/',
         },
         resolveLoader: {
@@ -149,5 +175,5 @@ module.exports = () => {
         config.stats = 'errors-warnings';
     }
 
-    return config;
+    return merge(config, Config.get('webpack.extend'));
 };

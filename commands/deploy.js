@@ -2,6 +2,7 @@ const path = require('path');
 const consola = require('consola');
 const themeKit = require('@shopify/themekit');
 const build = require('./build');
+const Config = require('../packages/Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
 
 const deploy = async ({ env }) => {
@@ -16,7 +17,7 @@ const deploy = async ({ env }) => {
             await previousPromise;
             return themeKit.command('deploy', {
                 config: path.resolve(__dirname, '..', 'config.yml'),
-                dir: 'dist',
+                dir: Config.get('paths.theme.dist'),
                 ...getShopifyEnvKeys(currentEnv),
             });
         }, Promise.resolve());

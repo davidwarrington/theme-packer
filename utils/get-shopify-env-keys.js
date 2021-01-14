@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
+const Config = require('../packages/Config');
 const convertSnakeToCamelCase = require('./convert-snake-to-camel-case');
 
 /**
@@ -23,7 +24,10 @@ const getEnvFileName = name => {
  * @returns {{[key: string]: string}}
  */
 const getShopifyEnvKeys = env => {
-    const envFilePath = path.resolve(process.cwd(), getEnvFileName(env));
+    const envFilePath = path.resolve(
+        Config.get('paths.theme'),
+        getEnvFileName(env)
+    );
 
     if (!fs.existsSync(envFilePath)) {
         throw new Error(`Missing env file at ${envFilePath}`);

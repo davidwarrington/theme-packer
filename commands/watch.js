@@ -2,17 +2,15 @@ const path = require('path');
 const chokidar = require('chokidar');
 const consola = require('consola');
 const themeKit = require('@shopify/themekit');
+const Config = require('../packages/Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
 const Watcher = require('../packages/Watcher');
-
-const LAYOUT_DIR = 'src/scripts/layout/';
-const TEMPLATES_DIR = 'src/scripts/templates/';
 
 const watch = async ({ env }) => {
     try {
         themeKit.command('watch', {
             config: path.resolve(__dirname, '..', 'config.yml'),
-            dir: 'dist',
+            dir: Config.get('paths.theme.dist'),
             ...getShopifyEnvKeys(env),
         });
     } catch (error) {
@@ -23,12 +21,12 @@ const watch = async ({ env }) => {
     await server.start();
 
     chokidar
-        .watch('./src', { ignoreInitial: true })
-        .on('all', async (event, path) => {
+        .watch(Config.get('paths.theme.src'), { ignoreInitial: true })
+        .on('all', async (event, filepath) => {
             const changeInLayoutOrTemplatesDir = [
-                LAYOUT_DIR,
-                TEMPLATES_DIR,
-            ].some(dirPath => path.startsWith(dirPath));
+                Config.get('paths.theme.src.scripts.layout'),
+                Config.get('paths.theme.src.scripts.templates'),
+            ].some(dirPath => filepath.startsWith(dirPath));
             const restartEvent = ['add', 'unlink'].includes(event);
 
             if (changeInLayoutOrTemplatesDir && restartEvent) {
