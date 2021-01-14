@@ -165,7 +165,7 @@ module.exports = () => {
     } else {
         /**
          * @warning This is only a temporary fix.
-         * @see {@link https://github.com/webpack/webpack-dev-server/issues/2792|Related GitHub Issue}
+         * @see {@link https://github.com/webpack/webpack-dev-server/issues/2792 | Related GitHub Issue}
          */
         config.optimization = {
             minimize: false,
