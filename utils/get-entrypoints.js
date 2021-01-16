@@ -66,7 +66,7 @@ const isValidTemplate = filename => {
 
 /**
  * getEntrypoints is basically just a rewrite of the
- * {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js|Slate v1 get-entrypoints utilities}.
+ * {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js | Slate v1 get-entrypoints utilities}.
  */
 const getEntrypoints = () => {
     const entrypoints = {};

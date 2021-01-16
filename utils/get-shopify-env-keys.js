@@ -7,7 +7,7 @@ const convertSnakeToCamelCase = require('./convert-snake-to-camel-case');
 /**
  * @param {string} name
  *
- * Function is a copy of _getFileName from {@link https://github.com/Shopify/slate/blob/5ecc510efed9a14fa9e3954c1adedeac91650144/packages/slate-env/index.js#L37|@shopify/slate-env}.
+ * Function is a copy of _getFileName from {@link https://github.com/Shopify/slate/blob/5ecc510efed9a14fa9e3954c1adedeac91650144/packages/slate-env/index.js#L37 | @shopify/slate-env}.
  */
 const getEnvFileName = name => {
     const basename = '.env';
