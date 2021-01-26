@@ -153,6 +153,27 @@ module.exports = () => {
                         'sass-loader',
                     ],
                 },
+                {
+                    test: /\.(eot|ttf|woff|woff2|otf)$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: '[name][ext]',
+                    },
+                },
+                {
+                    test: /\.(jpg|jpeg|png|gif)$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: '[name][ext]',
+                    },
+                },
+                {
+                    test: /\.svg$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: '[name][ext]',
+                    },
+                },
             ],
         },
         plugins,
