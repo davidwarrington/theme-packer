@@ -54,6 +54,10 @@ const paths = {
         path.join(config.get('paths.theme.src.scripts.templates'), 'customers'),
 
     /** @param {Config} config */
+    'paths.theme.src.schemas': config =>
+        path.join(config.get('paths.theme.src'), 'schemas'),
+
+    /** @param {Config} config */
     'paths.theme.src.sections': config =>
         path.join(config.get('paths.theme.src'), 'sections'),
 
