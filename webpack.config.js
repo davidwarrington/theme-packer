@@ -2,6 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const LiquidSchemaPlugin = require('liquid-schema-plugin');
 const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
@@ -72,7 +73,6 @@ module.exports = () => {
             templateContent: renderStyleTagsSnippet,
         }),
         new CopyWebpackPlugin({
-            /** @todo Replace sections pattern with liquid-schema-plugin once updated for Webpack v5. */
             patterns: [
                 {
                     from: Config.get('paths.theme.src.assets'),
@@ -91,10 +91,6 @@ module.exports = () => {
                     to: Config.get('paths.theme.dist.locales'),
                 },
                 {
-                    from: Config.get('paths.theme.src.sections'),
-                    to: Config.get('paths.theme.dist.sections'),
-                },
-                {
                     from: Config.get('paths.theme.src.snippets'),
                     to: Config.get('paths.theme.dist.snippets'),
                 },
@@ -103,6 +99,13 @@ module.exports = () => {
                     to: Config.get('paths.theme.dist.templates'),
                 },
             ],
+        }),
+        new LiquidSchemaPlugin({
+            from: {
+                liquid: Config.get('paths.theme.src.sections'),
+                schema: Config.get('paths.theme.src.schemas'),
+            },
+            to: Config.get('paths.theme.dist.sections'),
         }),
         new MiniCssExtractPlugin(),
     ];
