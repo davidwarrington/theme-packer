@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const consola = require('consola');
 const Config = require('../packages/Config');
 
 /**
@@ -103,8 +102,6 @@ const getEntrypoints = () => {
             entrypoints[`${entryType}.${name}`] = entryFile;
         });
     });
-
-    consola.info('Entrypoints:', entrypoints);
 
     return entrypoints;
 };
