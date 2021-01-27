@@ -127,6 +127,10 @@ const server = {
 
 const webpack = {
     'webpack.extend': {},
+
+    'webpack.assets.snippets.script-tags': 'base.script-tags.liquid',
+
+    'webpack.assets.snippets.style-tags': 'base.style-tags.liquid',
 };
 
 module.exports = {

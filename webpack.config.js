@@ -44,7 +44,7 @@ module.exports = () => {
             excludeChunks: ['static'],
             filename: path.join(
                 Config.get('paths.theme.dist.snippets'),
-                'includes.script-tags.liquid'
+                Config.get('webpack.assets.snippets.script-tags')
             ),
             inject: false,
             minify: {
@@ -61,7 +61,7 @@ module.exports = () => {
             excludeChunks: ['static'],
             filename: path.join(
                 Config.get('paths.theme.dist.snippets'),
-                'includes.style-tags.liquid'
+                Config.get('webpack.assets.snippets.style-tags')
             ),
             inject: false,
             minify: {
@@ -117,6 +117,14 @@ module.exports = () => {
         });
 
         plugins.push(new webpack.HotModuleReplacementPlugin());
+    }
+
+    if (mode === 'production') {
+        plugins.push(
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            })
+        );
     }
 
     const config = {
@@ -180,6 +188,8 @@ module.exports = () => {
     };
 
     if (mode === 'production') {
+        config.devtool = 'hidden-source-map';
+
         config.optimization = {
             splitChunks: {
                 chunks: 'initial',
@@ -187,6 +197,8 @@ module.exports = () => {
             },
         };
     } else {
+        config.devtool = 'eval-source-map';
+
         /**
          * @warning This is only a temporary fix.
          * @see {@link https://github.com/webpack/webpack-dev-server/issues/2792 | Related GitHub Issue}
