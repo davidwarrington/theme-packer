@@ -1,11 +1,11 @@
 {
-    "name": "shopify-webpack",
+    "name": "theme-packer",
     "version": "1.0.0",
     "main": "cli.js",
     "bin": {
-        "shopify-webpack": "cli.js"
+        "theme-packer": "cli.js"
     },
-    "repository": "git@github.com:davidwarrington/shopify-webpack",
+    "repository": "git@github.com:davidwarrington/theme-packer",
     "author": "davidwarrington <davidmwarrington+github@gmail.com>",
     "license": "MIT",
     "dependencies": {
