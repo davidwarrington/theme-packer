@@ -1,10 +1,10 @@
-# Theme-Packer
+# Getting Started
 
-Welcome to Theme-Packer! A modern toolset for developing Shopify themes heavily inspired by the [now-deprecated Slate](https://github.com/Shopify/slate).
+Introducing Theme Packer! A modern toolset for developing Shopify themes heavily inspired by the now deprecated [Slate](https://github.com/Shopify/slate).
 
-## Getting Started
+## Installation
 
-### Installation
+Run the following command:
 
 <code-group>
 <code-block title="YARN">
@@ -20,7 +20,7 @@ npx create-theme-packer-theme ./path/to/theme
 </code-block>
 </code-group>
 
-### Connecting to your store
+## Connecting to your store
 
 Create a `.env` file with the following keys:
 ```bash
@@ -43,9 +43,9 @@ SHOPIFY_IGNORES=
 SHOPIFY_ENV=
 ```
 
-### Start developing
+## Start developing
 
-Run Theme-Packer in watch mode with:
+Run Theme Packer in watch mode with:
 
 <code-group>
 <code-block title="YARN">
@@ -61,7 +61,7 @@ npm run watch
 </code-block>
 </code-group>
 
-### Deploying your store theme
+## Deploying your store theme
 
 To deploy your theme run:
 
