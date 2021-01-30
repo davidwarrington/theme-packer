@@ -44,8 +44,7 @@ ThemeKit provides two options for ignoring file updates: managing your ignore li
 
 We often need schema options to be shared across multiple sections. We might for example need a predefined set of colours available to style some sections. Theme Packer allows you to write your section schemas separately as JavaScript modules and import them with a custom tag. To do so add a `schema` tag in the following format: `{% schema '[import]' %}`, where `[import]` is the name of the schema module in your `/src/schemas` directory. You can read more about it here: [Liquid Schema Plugin](https://github.com/davidwarrington/liquid-schema-plugin).
 
-<code-group>
-<code-block title="Input: section.js">
+Input: `section.js`
 ```js
 module.exports = {
     name: 'Section',
@@ -57,19 +56,15 @@ module.exports = {
     ],
 };
 ```
-</code-block>
 
-<code-block title="Input: section.liquid">
+Input: `section.liquid`
 ```html
 {%- render 'section-component' -%}
 
 {% schema 'section' %}
 ```
-</code-block>
-</code-group>
 
-<code-group>
-<code-block title="Output: section.liquid">
+Output: `section.liquid`
 ```html
 {%- render 'section-component' -%}
 
@@ -81,5 +76,3 @@ module.exports = {
 }
 {% endschema %}
 ```
-</code-block>
-</code-group>
