@@ -6,19 +6,11 @@ Introducing Theme Packer! A modern toolset for developing Shopify themes heavily
 
 Run the following command:
 
-<code-group>
-<code-block title="YARN">
 ```bash
 yarn create theme-packer-theme ./path/to/theme
-```
-</code-block>
-
-<code-block title="NPM">
-```bash
+# or if you prefer npm
 npx create-theme-packer-theme ./path/to/theme
 ```
-</code-block>
-</code-group>
 
 ## Connecting to your store
 
@@ -47,34 +39,18 @@ SHOPIFY_ENV=
 
 Run Theme Packer in watch mode with:
 
-<code-group>
-<code-block title="YARN">
 ```bash
 yarn watch
-```
-</code-block>
-
-<code-block title="NPM">
-```bash
+# or if you prefer npm
 npm run watch
 ```
-</code-block>
-</code-group>
 
 ## Deploying your store theme
 
 To deploy your theme run:
 
-<code-group>
-<code-block title="YARN">
 ```bash
 yarn deploy
-```
-</code-block>
-
-<code-block title="NPM">
-```bash
+# or if you prefer npm
 npm run deploy
 ```
-</code-block>
-</code-group>
