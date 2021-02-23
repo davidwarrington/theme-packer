@@ -28,7 +28,7 @@ const getAssetSrc = filename =>
 const getEntrypointKey = (type, otherFileNameParts) => {
     const filename = otherFileNameParts.join(entryPartsDelimiter);
 
-    return `${type}.${path.basename(filename, path.extname(filename))}`;
+    return `${type}.${path.basename(filename)}`;
 };
 
 /** @param {ModulePartialData[]} partials */
@@ -84,7 +84,7 @@ const getPartialsData = (filename, entrypoints) => {
 
         return {
             entrypoint: entrypoints[getEntrypointKey(type, otherFileNameParts)],
-            filename: otherFileNameParts[0],
+            filename: otherFileNameParts.join(entryPartsDelimiter),
             parentDirectory,
             type: type === 'templates' ? 'template' : type,
         };
