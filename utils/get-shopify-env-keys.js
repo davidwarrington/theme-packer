@@ -33,8 +33,8 @@ const getShopifyEnvKeys = env => {
         throw new Error(`Missing env file at ${envFilePath}`);
     }
 
-    const results = dotenv.config({ path: envFilePath });
-    const shopifyEntries = Object.entries(results.parsed)
+    dotenv.config({ path: envFilePath });
+    const shopifyEntries = Object.entries(process.env)
         .filter(([key]) => key.startsWith('SHOPIFY_'))
         .map(([key, value]) => [
             convertSnakeToCamelCase(key.toLowerCase().replace(/^shopify_/, '')),
