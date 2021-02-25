@@ -20,7 +20,7 @@ const watch = async ({ env }) => {
         consola.error(error);
     }
 
-    const server = new Watcher();
+    const server = new Watcher(env);
     await server.start();
 
     chokidar
