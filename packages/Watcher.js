@@ -9,11 +9,11 @@ const getWebpackConfig = require('../webpack.config');
 
 const isHotUpdateFile = filepath => /\.hot-update\.js(on)?$/.test(filepath);
 
-const shopifyEnvKeys = getShopifyEnvKeys();
-
 class Watcher {
-    constructor() {
+    /** @param {string} env */
+    constructor(env) {
         this.app = null;
+        this.shopifyEnvKeys = getShopifyEnvKeys(env);
     }
 
     /** @returns {browserSync.BrowserSyncInstance} */
@@ -43,7 +43,7 @@ class Watcher {
                 https: true,
                 middleware,
                 port: Config.get('server.port'),
-                proxy: `https://${shopifyEnvKeys.store}?preview_theme_id=${shopifyEnvKeys.themeId}`,
+                proxy: `https://${this.shopifyEnvKeys.store}?preview_theme_id=${this.shopifyEnvKeys.themeId}`,
                 reloadDebounce: 1000,
                 snippetOptions: {
                     rule: {
