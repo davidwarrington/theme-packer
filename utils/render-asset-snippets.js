@@ -19,7 +19,7 @@ const mode = Config.get('app.mode');
 const getAssetSrc = filename =>
     mode === 'production'
         ? `{{ '${filename}' | asset_url }}`
-        : `https://localhost:${Config.get('server.port')}/assets/${filename}`;
+        : `/assets/${filename}`;
 
 /**
  * @param {string} type
