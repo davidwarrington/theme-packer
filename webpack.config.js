@@ -211,5 +211,7 @@ module.exports = () => {
         config.stats = 'errors-warnings';
     }
 
-    return merge(config, Config.get('webpack.extend'));
+    const overriddenConfig = Config.get('webpack.override')(config);
+
+    return merge(overriddenConfig, Config.get('webpack.extend'));
 };
