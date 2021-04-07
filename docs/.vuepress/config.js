@@ -3,7 +3,7 @@ module.exports = {
     title: 'Theme Packer',
     themeConfig: {
         repo: 'davidwarrington/theme-packer',
-        sidebar: ['/', '/guide/', '/configuration/', '/concepts/'],
+        sidebar: ['/', '/guide/', '/configuration/', '/concepts/', '/recipes/'],
         sidebarDepth: 2,
     },
 };
