@@ -1,5 +1,6 @@
 const path = require('path');
 
+/** @typedef {import('browser-sync').BrowserSyncInstance} BrowserSyncInstance */
 /** @typedef {import('./index')} Config */
 
 const app = {
@@ -123,6 +124,13 @@ const paths = {
 
 const server = {
     'server.port': 3000,
+
+    /**
+     * @type {BrowserSyncInstance}
+     *
+     * Only available in watch mode
+     */
+    'server.instance': null,
 };
 
 const webpack = {

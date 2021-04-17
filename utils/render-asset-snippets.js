@@ -19,7 +19,21 @@ const mode = Config.get('app.mode');
 const getAssetSrc = filename =>
     mode === 'production'
         ? `{{ '${filename}' | asset_url }}`
-        : `/assets/${filename}`;
+        : `{{ base_url }}/assets/${filename}`;
+
+/**
+ * @param {string} localUrl
+ *
+ * Make asset paths absolute whilst running in development mode on the theme customiser.
+ *
+ * @note Preferably this would also set the URL prefix for `.myshopify.com` or `.shopifypreview.com` urls,
+ * but that does not seem to be possible.
+ */
+const assignBaseUrl = baseUrl => `
+    {%- if request.design_mode -%}
+        {%- assign base_url = '${baseUrl}' -%}
+    {%- endif -%}
+`;
 
 /**
  * @param {string} type
@@ -96,7 +110,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
         decodeURIComponent(path.basename(filename))
     );
 
-    return jsFiles
+    const tags = jsFiles
         .map(filename => {
             if (filename === 'runtime.js') {
                 return `<script src="${getAssetSrc(filename)}"></script>`;
@@ -120,6 +134,20 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
             `;
         })
         .join('');
+
+    const browserSyncInstance = Config.get('server.instance');
+    if (browserSyncInstance) {
+        const localUrl = new URL(
+            browserSyncInstance.getOption('urls').get('local')
+        );
+
+        return `
+            ${assignBaseUrl(localUrl.origin)}
+            ${tags}
+        `;
+    }
+
+    return tags;
 };
 
 const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
@@ -127,7 +155,7 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
         decodeURIComponent(path.basename(filename))
     );
 
-    return cssFiles
+    const tags = cssFiles
         .map(filename => {
             const partials = getPartialsData(
                 filename,
@@ -146,6 +174,20 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
             `;
         })
         .join('');
+
+    const browserSyncInstance = Config.get('server.instance');
+    if (browserSyncInstance) {
+        const localUrl = new URL(
+            browserSyncInstance.getOption('urls').get('local')
+        );
+
+        return `
+            ${assignBaseUrl(localUrl.origin)}
+            ${tags}
+        `;
+    }
+
+    return tags;
 };
 
 module.exports = {
