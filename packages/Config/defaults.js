@@ -8,6 +8,10 @@ const app = {
         process.env.NODE_ENV === 'production' ? 'production' : 'development',
 };
 
+const assets = {
+    'assets.always-external-urls': false,
+};
+
 const paths = {
     'paths.theme': process.cwd(),
 
@@ -145,6 +149,7 @@ const webpack = {
 
 module.exports = {
     app,
+    assets,
     paths,
     server,
     webpack,

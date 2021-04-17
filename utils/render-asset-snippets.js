@@ -22,18 +22,32 @@ const getAssetSrc = filename =>
         : `{{ base_url }}/assets/${filename}`;
 
 /**
- * @param {string} localUrl
- *
  * Make asset paths absolute whilst running in development mode on the theme customiser.
  *
- * @note Preferably this would also set the URL prefix for `.myshopify.com` or `.shopifypreview.com` urls,
- * but that does not seem to be possible.
+ * @note Due to quirks surronding `shop.url` and similar Liquid variables, it's not
+ * possible to set this dynamically for `.myshopify.com` or `.shopifypreview.com` urls.
  */
-const assignBaseUrl = baseUrl => `
-    {%- if request.design_mode -%}
-        {%- assign base_url = '${baseUrl}' -%}
-    {%- endif -%}
-`;
+const assignBaseUrl = () => {
+    const browserSyncInstance = Config.get('server.instance');
+
+    if (!browserSyncInstance) {
+        return '';
+    }
+
+    /** @type {string} url */
+    const urls = browserSyncInstance.getOption('urls');
+    const getOriginFromUrl = url => new URL(urls.get(url)).origin;
+
+    if (Config.get('assets.always-external-urls')) {
+        return `{%- assign base_url = '${getOriginFromUrl('external')}' -%}`;
+    }
+
+    return `
+        {%- if request.design_mode -%}
+            {%- assign base_url = '${getOriginFromUrl('local')}' -%}
+        {%- endif -%}
+    `;
+};
 
 /**
  * @param {string} type
