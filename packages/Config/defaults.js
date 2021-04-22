@@ -126,6 +126,8 @@ const server = {
 };
 
 const webpack = {
+    'webpack.override': () => webpackConfig => webpackConfig,
+
     'webpack.extend': {},
 
     'webpack.assets.snippets.script-tags': 'base.script-tags.liquid',
