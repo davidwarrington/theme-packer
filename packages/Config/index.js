@@ -1,10 +1,11 @@
-const { app, paths, server, webpack } = require('./defaults');
+const { app, assets, paths, server, webpack } = require('./defaults');
 const getUserConfig = require('../../utils/get-user-config');
 
 class Config {
     constructor() {
         this.data = {
             ...app,
+            ...assets,
             ...paths,
             ...server,
             ...webpack,

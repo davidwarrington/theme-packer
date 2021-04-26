@@ -64,6 +64,8 @@ class Watcher {
                 }
             }
         );
+
+        Config.set('server.instance', this.app);
     }
 
     async close() {

@@ -1,10 +1,15 @@
 const path = require('path');
 
+/** @typedef {import('browser-sync').BrowserSyncInstance} BrowserSyncInstance */
 /** @typedef {import('./index')} Config */
 
 const app = {
     'app.mode':
         process.env.NODE_ENV === 'production' ? 'production' : 'development',
+};
+
+const assets = {
+    'assets.always-external-urls': false,
 };
 
 const paths = {
@@ -123,6 +128,13 @@ const paths = {
 
 const server = {
     'server.port': 3000,
+
+    /**
+     * @type {BrowserSyncInstance}
+     *
+     * Only available in watch mode
+     */
+    'server.instance': null,
 };
 
 const webpack = {
@@ -137,6 +149,7 @@ const webpack = {
 
 module.exports = {
     app,
+    assets,
     paths,
     server,
     webpack,

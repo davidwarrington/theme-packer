@@ -19,7 +19,35 @@ const mode = Config.get('app.mode');
 const getAssetSrc = filename =>
     mode === 'production'
         ? `{{ '${filename}' | asset_url }}`
-        : `/assets/${filename}`;
+        : `{{ base_url }}/assets/${filename}`;
+
+/**
+ * Make asset paths absolute whilst running in development mode on the theme customiser.
+ *
+ * @note Due to quirks surronding `shop.url` and similar Liquid variables, it's not
+ * possible to set this dynamically for `.myshopify.com` or `.shopifypreview.com` urls.
+ */
+const assignBaseUrl = () => {
+    const browserSyncInstance = Config.get('server.instance');
+
+    if (!browserSyncInstance) {
+        return '';
+    }
+
+    /** @type {string} url */
+    const urls = browserSyncInstance.getOption('urls');
+    const getOriginFromUrl = url => new URL(urls.get(url)).origin;
+
+    if (Config.get('assets.always-external-urls')) {
+        return `{%- assign base_url = '${getOriginFromUrl('external')}' -%}`;
+    }
+
+    return `
+        {%- if request.design_mode -%}
+            {%- assign base_url = '${getOriginFromUrl('local')}' -%}
+        {%- endif -%}
+    `;
+};
 
 /**
  * @param {string} type
@@ -96,7 +124,7 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
         decodeURIComponent(path.basename(filename))
     );
 
-    return jsFiles
+    const tags = jsFiles
         .map(filename => {
             if (filename === 'runtime.js') {
                 return `<script src="${getAssetSrc(filename)}"></script>`;
@@ -120,6 +148,20 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
             `;
         })
         .join('');
+
+    const browserSyncInstance = Config.get('server.instance');
+    if (browserSyncInstance) {
+        const localUrl = new URL(
+            browserSyncInstance.getOption('urls').get('local')
+        );
+
+        return `
+            ${assignBaseUrl(localUrl.origin)}
+            ${tags}
+        `;
+    }
+
+    return tags;
 };
 
 const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
@@ -127,7 +169,7 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
         decodeURIComponent(path.basename(filename))
     );
 
-    return cssFiles
+    const tags = cssFiles
         .map(filename => {
             const partials = getPartialsData(
                 filename,
@@ -146,6 +188,20 @@ const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
             `;
         })
         .join('');
+
+    const browserSyncInstance = Config.get('server.instance');
+    if (browserSyncInstance) {
+        const localUrl = new URL(
+            browserSyncInstance.getOption('urls').get('local')
+        );
+
+        return `
+            ${assignBaseUrl(localUrl.origin)}
+            ${tags}
+        `;
+    }
+
+    return tags;
 };
 
 module.exports = {
