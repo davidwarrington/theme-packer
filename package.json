@@ -10,7 +10,7 @@
     "license": "MIT",
     "dependencies": {
         "@babel/core": "^7.14.0",
-        "@shopify/themekit": "^1.1.7",
+        "@shopify/themekit": "^1.1.8",
         "babel-loader": "^8.2.2",
         "browser-sync": "^2.26.14",
         "chokidar": "^3.5.1",
