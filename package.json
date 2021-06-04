@@ -1,6 +1,6 @@
 {
     "name": "theme-packer",
-    "version": "1.0.0-beta.5",
+    "version": "1.0.0-beta.6",
     "main": "cli.js",
     "bin": {
         "theme-packer": "cli.js"
