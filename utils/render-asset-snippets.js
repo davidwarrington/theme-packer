@@ -95,9 +95,14 @@ const getPartialsData = (filename, entrypoints) => {
         .filter(part => !part.startsWith('vendor'));
 
     return fileNameParts.map(partialName => {
-        const [type, ...otherFileNameParts] = partialName.split(
+        const [typeIdentifier, ...otherFileNameParts] = partialName.split(
             entryPartsDelimiter
         );
+
+        const type = {
+            l: 'layout',
+            t: 'templates'
+        }[typeIdentifier];
 
         let parentDirectory;
         if (type === 'templates') {
