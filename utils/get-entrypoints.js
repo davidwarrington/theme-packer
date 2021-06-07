@@ -99,7 +99,7 @@ const getEntrypoints = () => {
                 return;
             }
 
-            entrypoints[`${entryType}.${name}`] = entryFile;
+            entrypoints[`${entryType.charAt(0)}.${name}`] = entryFile;
         });
     });
 
