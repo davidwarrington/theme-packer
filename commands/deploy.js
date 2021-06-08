@@ -4,6 +4,7 @@ const themeKit = require('@shopify/themekit');
 const build = require('./build');
 const Config = require('../packages/Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
+const removeUndefinedKeys = require('../utils/remove-undefined-keys');
 
 const deploy = async ({ env, allenvs, allowLive, nodelete }) => {
     try {
@@ -15,7 +16,7 @@ const deploy = async ({ env, allenvs, allowLive, nodelete }) => {
 
         await envs.reduce(async (previousPromise, currentEnv) => {
             await previousPromise;
-            return themeKit.command('deploy', {
+            const options = removeUndefinedKeys({
                 config: path.resolve(__dirname, '..', 'config.yml'),
                 dir: Config.get('paths.theme.dist'),
                 ...getShopifyEnvKeys(currentEnv),
@@ -23,6 +24,8 @@ const deploy = async ({ env, allenvs, allowLive, nodelete }) => {
                 allowLive,
                 nodelete,
             });
+
+            return themeKit.command('deploy', options);
         }, Promise.resolve());
 
         consola.success('Finished deployment.');

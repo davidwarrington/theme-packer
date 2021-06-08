@@ -5,13 +5,14 @@ const themeKit = require('@shopify/themekit');
 const ensureDirectoryExists = require('../utils/ensure-directory-exists');
 const Config = require('../packages/Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
+const removeUndefinedKeys = require('../utils/remove-undefined-keys');
 const Watcher = require('../packages/Watcher');
 
 const watch = async ({ env, allenvs, allowLive, notify }) => {
     try {
         ensureDirectoryExists(Config.get('paths.theme.dist'));
 
-        themeKit.command('watch', {
+        const options = removeUndefinedKeys({
             config: path.resolve(__dirname, '..', 'config.yml'),
             dir: Config.get('paths.theme.dist'),
             ...getShopifyEnvKeys(env),
@@ -19,6 +20,8 @@ const watch = async ({ env, allenvs, allowLive, notify }) => {
             allowLive,
             notify,
         });
+
+        themeKit.command('watch', options);
     } catch (error) {
         consola.error(error);
     }
