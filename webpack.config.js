@@ -76,7 +76,7 @@ module.exports = () => {
             patterns: [
                 {
                     from: Config.get('paths.theme.src.assets'),
-                    to: '[name].[ext]',
+                    to: '[name][ext]',
                 },
                 {
                     from: Config.get('paths.theme.src.config'),
