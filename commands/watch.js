@@ -7,7 +7,7 @@ const Config = require('../packages/Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
 const Watcher = require('../packages/Watcher');
 
-const watch = async ({ env }) => {
+const watch = async ({ env, allenvs, allowLive, notify }) => {
     try {
         ensureDirectoryExists(Config.get('paths.theme.dist'));
 
@@ -15,6 +15,9 @@ const watch = async ({ env }) => {
             config: path.resolve(__dirname, '..', 'config.yml'),
             dir: Config.get('paths.theme.dist'),
             ...getShopifyEnvKeys(env),
+            allenvs,
+            allowLive,
+            notify,
         });
     } catch (error) {
         consola.error(error);

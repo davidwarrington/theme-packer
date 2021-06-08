@@ -5,7 +5,7 @@ const build = require('./build');
 const Config = require('../packages/Config');
 const getShopifyEnvKeys = require('../utils/get-shopify-env-keys');
 
-const deploy = async ({ env }) => {
+const deploy = async ({ env, allenvs, allowLive, nodelete }) => {
     try {
         await build();
         consola.info('Starting deployment');
@@ -19,6 +19,9 @@ const deploy = async ({ env }) => {
                 config: path.resolve(__dirname, '..', 'config.yml'),
                 dir: Config.get('paths.theme.dist'),
                 ...getShopifyEnvKeys(currentEnv),
+                allenvs,
+                allowLive,
+                nodelete,
             });
         }, Promise.resolve());
 
