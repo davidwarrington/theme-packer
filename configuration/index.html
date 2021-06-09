@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Configuration | Theme Packer</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="">
+    
+    <link rel="preload" href="/theme-packer/assets/css/0.styles.8251521d.css" as="style"><link rel="preload" href="/theme-packer/assets/js/app.0992b405.js" as="script"><link rel="preload" href="/theme-packer/assets/js/2.6c49a079.js" as="script"><link rel="preload" href="/theme-packer/assets/js/10.6ba0ee02.js" as="script"><link rel="prefetch" href="/theme-packer/assets/js/11.a20347c7.js"><link rel="prefetch" href="/theme-packer/assets/js/3.ca8dc95a.js"><link rel="prefetch" href="/theme-packer/assets/js/4.83f8933e.js"><link rel="prefetch" href="/theme-packer/assets/js/5.f2472bc4.js"><link rel="prefetch" href="/theme-packer/assets/js/6.9e21d773.js"><link rel="prefetch" href="/theme-packer/assets/js/7.8cafd4a0.js"><link rel="prefetch" href="/theme-packer/assets/js/8.f651a76b.js"><link rel="prefetch" href="/theme-packer/assets/js/9.303ec2d1.js">
+    <link rel="stylesheet" href="/theme-packer/assets/css/0.styles.8251521d.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/theme-packer/" class="home-link router-link-active"><!----> <span class="site-name">Theme Packer</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"> <a href="https://github.com/davidwarrington/theme-packer" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"> <a href="https://github.com/davidwarrington/theme-packer" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><a href="/theme-packer/" aria-current="page" class="sidebar-link">Getting Started</a></li><li><a href="/theme-packer/guide/" class="sidebar-link">Guide</a></li><li><a href="/theme-packer/configuration/" aria-current="page" class="active sidebar-link">Configuration</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/theme-packer/configuration/#extending-webpack" class="sidebar-link">Extending webpack</a></li><li class="sidebar-sub-header"><a href="/theme-packer/configuration/#overriding-webpack" class="sidebar-link">Overriding webpack</a></li></ul></li><li><a href="/theme-packer/concepts/" class="sidebar-link">Concepts</a></li><li><a href="/theme-packer/recipes/" class="sidebar-link">Recipe</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="configuration"><a href="#configuration" class="header-anchor">#</a> Configuration</h1> <p>Theme Packer is designed to be extendable. Want to use Vue on your store? You can add it to your config. Want to add a bunch of PostCSS plugins? You can do that too.</p> <p>We purposely expose most config files in your project root directory, so, if for example you'd like to use TailwindCSS, you can add it via <code>postcss.config.js</code> in your project root.</p> <h2 id="extending-webpack"><a href="#extending-webpack" class="header-anchor">#</a> Extending webpack</h2> <p>The webpack config isn't exposed directly to you. The reason for this is that it's a long and complex config. If you wish to change it at all, you can do so with the <code>'webpack.extend'</code> config option. For example, if you want to use svgo-loader to optimise your SVGs, you might do the following:</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">'webpack.extend'</span><span class="token operator">:</span> <span class="token parameter">config</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            module<span class="token operator">:</span> <span class="token punctuation">{</span>
+                rules<span class="token operator">:</span> <span class="token punctuation">[</span>
+                    <span class="token punctuation">{</span>
+                        test<span class="token operator">:</span> <span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">\.svg$</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span>
+                        use<span class="token operator">:</span> <span class="token punctuation">[</span>
+                            <span class="token string">'file-loader'</span><span class="token punctuation">,</span>
+                            <span class="token string">'svgo-loader'</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><p>Theme Packer uses <a href="https://github.com/survivejs/webpack-merge" target="_blank" rel="noopener noreferrer">webpack-merge<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a> behind the scenes to merge the config you provide with the pre-existing config. This means that you don't need to completely rewrite the config in order to add the plugins or loaders you require.</p> <h2 id="overriding-webpack"><a href="#overriding-webpack" class="header-anchor">#</a> Overriding webpack</h2> <div class="custom-block warning"><p class="custom-block-title">WARNING</p> <p>It is recommended that you avoid overriding the built-in config if possible. It should only be overwritten if you are confident with webpack configuration.</p></div> <p>Unfortunately sometimes we need to make deeper customisations than webpack-merge will allow. You can use the <code>'webpack.override'</code> config option for this instead. It is treated as two curried functions. The first of which will receive the Theme Packer config as a parameter and the second of which will receive the base webpack config as a parameter. In the example below, it is used to override the default <code>svg</code> rule, treating SVG imports ending in <code>?source</code> as a different type of <a href="https://webpack.js.org/guides/asset-modules/" target="_blank" rel="noopener noreferrer">asset module<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>.</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">'webpack.override'</span><span class="token operator">:</span> <span class="token parameter">config</span> <span class="token operator">=&gt;</span> <span class="token parameter">webpackConfig</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> newConfig <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token operator">...</span>webpackConfig <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+        newConfig<span class="token punctuation">.</span>module<span class="token punctuation">.</span>rules <span class="token operator">=</span> newConfig<span class="token punctuation">.</span>module<span class="token punctuation">.</span>rules<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token parameter">rule</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>rule<span class="token punctuation">.</span>test<span class="token punctuation">.</span><span class="token function">test</span><span class="token punctuation">(</span><span class="token string">'.svg'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                rule<span class="token punctuation">.</span>oneOf <span class="token operator">=</span> <span class="token punctuation">[</span>
+                    <span class="token punctuation">{</span>
+                        resourceQuery<span class="token operator">:</span> <span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">source</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span>
+                        type<span class="token operator">:</span> <span class="token string">'asset/source'</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">{</span>
+                        generator<span class="token operator">:</span> rule<span class="token punctuation">.</span>generator<span class="token punctuation">,</span>
+                        type<span class="token operator">:</span> rule<span class="token punctuation">.</span>type<span class="token punctuation">,</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+                <span class="token keyword">delete</span> rule<span class="token punctuation">.</span>generator<span class="token punctuation">;</span>
+                <span class="token keyword">delete</span> rule<span class="token punctuation">.</span>type<span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+
+            <span class="token keyword">return</span> rule<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">return</span> newConfig<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/theme-packer/guide/" class="prev">
+        Guide
+      </a></span> <span class="next"><a href="/theme-packer/concepts/">
+        Concepts
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/theme-packer/assets/js/app.0992b405.js" defer></script><script src="/theme-packer/assets/js/2.6c49a079.js" defer></script><script src="/theme-packer/assets/js/10.6ba0ee02.js" defer></script>
+  </body>
+</html>
