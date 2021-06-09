@@ -193,7 +193,6 @@ module.exports = () => {
         config.optimization = {
             splitChunks: {
                 chunks: 'initial',
-                name: getChunkName,
             },
         };
     } else {

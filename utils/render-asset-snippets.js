@@ -11,8 +11,6 @@ const Config = require('../packages/Config');
  * }} ModulePartialData
  */
 
-const entryNameDelimiter = '@';
-const entryPartsDelimiter = '.';
 const mode = Config.get('app.mode');
 
 /** @param {string} filename */
@@ -49,77 +47,48 @@ const assignBaseUrl = () => {
     `;
 };
 
-/**
- * @param {string} type
- * @param {string[]} otherFileNameParts
- */
-const getEntrypointKey = (type, otherFileNameParts) => {
-    const filename = otherFileNameParts.join(entryPartsDelimiter);
-
-    return `${type}.${path.basename(filename)}`;
+const getChunkForFile = (filename, compilation) => {
+    return [...compilation.chunks].find(chunk => chunk.files.has(filename));
 };
 
-/** @param {ModulePartialData[]} partials */
-const getLiquidConditionsFromPartials = partials => {
-    return partials
-        .map(partial => {
-            let name = partial.filename;
-            if (partial.parentDirectory) {
-                name = `${partial.parentDirectory}/${name}`;
-            }
+const getLiquidConditionsFromChunk = chunk => {
+    const liquidAssociations = {
+        layouts: [],
+        templates: [],
+        other: [],
+    };
 
-            return `${partial.type} == '${name}'`;
-        })
-        .join(' or ');
-};
+    let runtimes;
+    if (typeof chunk.runtime === 'string') {
+        runtimes = [chunk.runtime];
+    } else {
+        runtimes = [...chunk.runtime];
+    }
 
-/**
- * @param {string} entry
- * @param {Entrypoints} entrypoints
- */
-const getParentDirectory = (entry, entrypoints) => {
-    const dirname = path.dirname(entrypoints[entry][0]);
-
-    return path.basename(dirname);
-};
-
-/**
- * @param {string} filename
- * @param {Entrypoints} entrypoints
- * @returns {ModulePartialData[]}
- */
-const getPartialsData = (filename, entrypoints) => {
-    const fileNameParts = path
-        .basename(filename, path.extname(filename))
-        .split(entryNameDelimiter)
-        .filter(part => !part.startsWith('vendor'));
-
-    return fileNameParts.map(partialName => {
-        const [type, ...otherFileNameParts] = partialName.split(
-            entryPartsDelimiter
-        );
-
-        let parentDirectory;
-        if (type === 'templates') {
-            const parentDirectoryName = getParentDirectory(
-                partialName,
-                entrypoints
+    runtimes.forEach(runtime => {
+        if (runtime.startsWith('layout.', '')) {
+            liquidAssociations.layouts.push(runtime.replace('layout.', ''));
+        } else if (runtime.startsWith('templates.', '')) {
+            liquidAssociations.templates.push(
+                runtime.replace('templates.', '')
             );
-            if (parentDirectoryName !== 'templates') {
-                parentDirectory = parentDirectoryName;
-            }
+        } else {
+            liquidAssociations.other.push(runtime);
         }
-
-        return {
-            entrypoint: entrypoints[getEntrypointKey(type, otherFileNameParts)],
-            filename: otherFileNameParts.join(entryPartsDelimiter),
-            parentDirectory,
-            type: type === 'templates' ? 'template' : type,
-        };
     });
+
+    const conditions = [];
+    liquidAssociations.layouts.forEach(layout =>
+        conditions.push(`layout == '${layout}'`)
+    );
+    liquidAssociations.templates.forEach(template =>
+        conditions.push(`template == '${template}'`)
+    );
+
+    return conditions.join(' or ');
 };
 
-const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
+const renderScriptTagsSnippet = ({ compilation, htmlWebpackPlugin }) => {
     const jsFiles = htmlWebpackPlugin.files.js.map(filename =>
         decodeURIComponent(path.basename(filename))
     );
@@ -130,14 +99,10 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
                 return `<script src="${getAssetSrc(filename)}"></script>`;
             }
 
-            const partials = getPartialsData(
-                filename,
-                htmlWebpackPlugin.options.entrypoints
-            );
+            const associatedChunk = getChunkForFile(filename, compilation);
 
+            const conditions = getLiquidConditionsFromChunk(associatedChunk);
             const assetSrc = getAssetSrc(filename);
-
-            const conditions = getLiquidConditionsFromPartials(partials);
 
             return `
                 {%- if ${conditions} -%}
@@ -164,20 +129,17 @@ const renderScriptTagsSnippet = ({ htmlWebpackPlugin }) => {
     return tags;
 };
 
-const renderStyleTagsSnippet = ({ htmlWebpackPlugin }) => {
+const renderStyleTagsSnippet = ({ compilation, htmlWebpackPlugin }) => {
     const cssFiles = htmlWebpackPlugin.files.css.map(filename =>
         decodeURIComponent(path.basename(filename))
     );
 
     const tags = cssFiles
         .map(filename => {
-            const partials = getPartialsData(
-                filename,
-                htmlWebpackPlugin.options.entrypoints
-            );
-            const assetSrc = getAssetSrc(filename);
+            const associatedChunk = getChunkForFile(filename, compilation);
 
-            const conditions = getLiquidConditionsFromPartials(partials);
+            const conditions = getLiquidConditionsFromChunk(associatedChunk);
+            const assetSrc = getAssetSrc(filename);
 
             return `
                 {%- if ${conditions} -%}
