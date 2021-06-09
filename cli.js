@@ -11,13 +11,21 @@ const watch = require('./commands/watch');
         .command(
             'deploy [env]',
             'Build theme and deploy to given environments.',
-            {},
+            y => {
+                y.option('allenvs', { alias: 'a' })
+                    .option('allow-live')
+                    .option('nodelete', { alias: 'n' });
+            },
             deploy
         )
         .command(
             'watch [env]',
             'Watch source files for theme updates.',
-            {},
+            y => {
+                y.option('allenvs', { alias: 'a' })
+                    .option('allow-live')
+                    .option('notify', { alias: 'n' });
+            },
             watch
         ).argv;
 })();

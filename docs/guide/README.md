@@ -98,3 +98,15 @@ You will should then find your browser presents a warning page. Click the "Advan
 !["Your connection is not private" warning page](../.vuepress/assets/your-connection-is-not-private.png)
 
 You may have to follow these steps again periodically, which used to cause a lot of confusion amongst users of Slate, which is why `assets.always-external-urls` is not enabled by default.
+
+## Passing flags to ThemeKit
+
+Theme Packer supports all command flags for the [deploy](https://shopify.dev/tools/theme-kit/command-reference#deploy) and [watch](https://shopify.dev/tools/theme-kit/command-reference#watch) commands in Theme Kit. Simply pass the flags to your command.
+
+```shell
+theme-packer deploy --allow-live
+```
+
+::: tip
+The `--allenvs` flag should not work with `.env` files. If you wish to use that flag, either use a `config.yml`, or just add multiple `--env` flags to your script.
+:::
