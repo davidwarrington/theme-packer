@@ -1,7 +1,7 @@
 const path = require('path');
 const Config = require('../packages/Config');
 
-/** @typedef {{[key: string]: string}} Entrypoints */
+/** @typedef {{[key: string]: string[]}} Entrypoints */
 /**
  * @typedef {{
  *  entrypoint: string;
@@ -47,11 +47,21 @@ const assignBaseUrl = () => {
     `;
 };
 
+/**
+ * @param {string} entry
+ * @param {Entrypoints} entrypoints
+ */
+const getParentDirectory = (entry, entrypoints) => {
+    const dirname = path.dirname(entrypoints[entry][0]);
+
+    return path.basename(dirname);
+};
+
 const getChunkForFile = (filename, compilation) => {
     return [...compilation.chunks].find(chunk => chunk.files.has(filename));
 };
 
-const getLiquidConditionsFromChunk = chunk => {
+const getLiquidConditionsFromChunk = (chunk, entrypoints) => {
     const liquidAssociations = {
         layouts: [],
         templates: [],
@@ -67,11 +77,15 @@ const getLiquidConditionsFromChunk = chunk => {
 
     runtimes.forEach(runtime => {
         if (runtime.startsWith('layout.', '')) {
-            liquidAssociations.layouts.push(runtime.replace('layout.', ''));
+            liquidAssociations.layouts.push(runtime.replace(/^layout\./, ''));
         } else if (runtime.startsWith('templates.', '')) {
-            liquidAssociations.templates.push(
-                runtime.replace('templates.', '')
-            );
+            let template = runtime.replace(/^templates\./, '');
+            const parentDirectory = getParentDirectory(runtime, entrypoints);
+            if (parentDirectory !== 'templates') {
+                template = `${parentDirectory}/${template}`;
+            }
+
+            liquidAssociations.templates.push(template);
         } else {
             liquidAssociations.other.push(runtime);
         }
@@ -101,7 +115,10 @@ const renderScriptTagsSnippet = ({ compilation, htmlWebpackPlugin }) => {
 
             const associatedChunk = getChunkForFile(filename, compilation);
 
-            const conditions = getLiquidConditionsFromChunk(associatedChunk);
+            const conditions = getLiquidConditionsFromChunk(
+                associatedChunk,
+                htmlWebpackPlugin.options.entrypoints
+            );
             const assetSrc = getAssetSrc(filename);
 
             return `
@@ -138,7 +155,10 @@ const renderStyleTagsSnippet = ({ compilation, htmlWebpackPlugin }) => {
         .map(filename => {
             const associatedChunk = getChunkForFile(filename, compilation);
 
-            const conditions = getLiquidConditionsFromChunk(associatedChunk);
+            const conditions = getLiquidConditionsFromChunk(
+                associatedChunk,
+                htmlWebpackPlugin.options.entrypoints
+            );
             const assetSrc = getAssetSrc(filename);
 
             return `
