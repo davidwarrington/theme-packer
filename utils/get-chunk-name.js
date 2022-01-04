@@ -1,3 +1,5 @@
+const md5 = require('./md5');
+
 const delimiter = '@';
 
 const getChunkName = (module, chunks, cacheGroup) => {
@@ -10,7 +12,8 @@ const getChunkName = (module, chunks, cacheGroup) => {
         name = `vendor${delimiter}${name}`;
     }
 
-    return name;
+    // 247 is the 255 character limit minus 7 (for when 'assets/' is prepended)
+    return name.length > 247 ? md5(name) : name;
 };
 
 module.exports = getChunkName;
