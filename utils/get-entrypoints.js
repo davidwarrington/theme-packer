@@ -100,12 +100,10 @@ const getEntrypoints = (asTemplateNameMap = false) => {
                 return;
             }
 
-            const hashedName = md5(name).substring(0, 6);
+            const hashedName = md5(name).substring(0, 6).toString();
 
             if (asTemplateNameMap) {
-                const hashedName = md5(name);
-
-                entrypoints[hashedName.toString()] = name;
+                entrypoints[hashedName] = name;
             } else {
                 entrypoints[`${entryType.charAt(0)}.${hashedName}`] = entryFile;
             }
