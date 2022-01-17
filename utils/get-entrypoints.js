@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const md5 = require('./md5');
 const Config = require('../packages/Config');
+const md5 = require('./md5');
 
 /**
  * @param {{[key: string]: string|string[]}} entrypoints
