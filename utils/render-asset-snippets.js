@@ -71,7 +71,15 @@ const getLiquidConditionsFromPartials = partials => {
                 name = `${partial.parentDirectory}/${name}`;
             }
 
-            return `${partial.type} == '${realNameMap[name]}'`;
+            let partialType = partial.type;
+            let partialName = realNameMap[name];
+
+            if (partial.parentDirectory === 'customers') {
+                partialType = 'template.directory';
+                partialName = partial.parentDirectory;
+            }
+
+            return `${partialType} == '${partialName}'`;
         })
         .join(' or ');
 };
