@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Config = require('../packages/Config');
+const md5 = require('./md5');
 
 /**
  * @param {{[key: string]: string|string[]}} entrypoints
@@ -67,7 +68,7 @@ const isValidTemplate = filename => {
  * getEntrypoints is basically just a rewrite of the
  * {@link https://github.com/Shopify/slate/blob/master/packages/slate-tools/tools/webpack/config/utilities/get-template-entrypoints.js | Slate v1 get-entrypoints utilities}.
  */
-const getEntrypoints = () => {
+const getEntrypoints = (asTemplateNameMap = false) => {
     const entrypoints = {};
 
     const entrypointsMap = {
@@ -99,7 +100,13 @@ const getEntrypoints = () => {
                 return;
             }
 
-            entrypoints[`${entryType}.${name}`] = entryFile;
+            const hashedName = md5(name).substring(0, 6).toString();
+
+            if (asTemplateNameMap) {
+                entrypoints[hashedName] = name;
+            } else {
+                entrypoints[`${entryType.charAt(0)}.${hashedName}`] = entryFile;
+            }
         });
     });
 

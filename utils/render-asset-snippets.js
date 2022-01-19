@@ -1,4 +1,5 @@
 const path = require('path');
+const { getEntrypoints } = require('./get-entrypoints');
 const Config = require('../packages/Config');
 
 /** @typedef {{[key: string]: string}} Entrypoints */
@@ -61,6 +62,8 @@ const getEntrypointKey = (type, otherFileNameParts) => {
 
 /** @param {ModulePartialData[]} partials */
 const getLiquidConditionsFromPartials = partials => {
+    const realNameMap = getEntrypoints(true);
+
     return partials
         .map(partial => {
             let name = partial.filename;
@@ -68,7 +71,15 @@ const getLiquidConditionsFromPartials = partials => {
                 name = `${partial.parentDirectory}/${name}`;
             }
 
-            return `${partial.type} == '${name}'`;
+            let partialType = partial.type;
+            let partialName = realNameMap[name];
+
+            if (partial.parentDirectory === 'customers') {
+                partialType = 'template.directory';
+                partialName = partial.parentDirectory;
+            }
+
+            return `${partialType} == '${partialName}'`;
         })
         .join(' or ');
 };
@@ -95,9 +106,14 @@ const getPartialsData = (filename, entrypoints) => {
         .filter(part => !part.startsWith('vendor'));
 
     return fileNameParts.map(partialName => {
-        const [type, ...otherFileNameParts] = partialName.split(
+        const [typeIdentifier, ...otherFileNameParts] = partialName.split(
             entryPartsDelimiter
         );
+
+        const type = {
+            l: 'layout',
+            t: 'templates'
+        }[typeIdentifier];
 
         let parentDirectory;
         if (type === 'templates') {
